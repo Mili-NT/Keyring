@@ -9,7 +9,7 @@ import shodan
 from time import sleep
 import codecs
 
-# TODO: Add per-run stats
+# TODO: Add multithreading
 
 #
 # Global Variables
@@ -74,7 +74,7 @@ def shodan_search(displaymode, page):
                     sofile.write(f'Key: {upkeys}')
 def github_search(displaymode, page):
     print("Searching for Github keys...")
-    github_api = '^\w{1,40}$'
+    github_api = r"[g|G][i|I][t|T][h|H][u|U][b|B].{0,30}['\"\\s][0-9a-zA-Z]{35,40}['\"\\s]"
     pagetext = page.text
     for k in re.findall(github_api, pagetext):
         if displaymode == 's' or 'b':
@@ -91,7 +91,7 @@ def github_search(displaymode, page):
             print(f'Potential Key: {k}')
 def AWS_search(displaymode, page):
     print("Searching for AWS Access Keys...")
-    aws_pattern = "AKIA[0-9A-Z]{16}"
+    aws_pattern = r"AKIA[0-9A-Z]{16}"
     pagetext = page.text
     for k in re.findall(aws_pattern, pagetext):
         if displaymode == 's' or 'b':
@@ -110,7 +110,7 @@ def AWS_search(displaymode, page):
 def google_access_token_search(displaymode, page):
     print("Scanning for google access tokens...")
     pagetext = page.text
-    gat_pattern = 'ya29.[0-9a-zA-Z_\\-]{68}'
+    gat_pattern = r'ya29.[0-9a-zA-Z_\\-]{68}'
     for k in re.findall(gat_pattern, pagetext):
         if displaymode == 's' or 'b':
             print('\nWarning: High Severity Item Found\n')
@@ -125,11 +125,30 @@ def google_access_token_search(displaymode, page):
                 gofile.write(f'Potential Token: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Token: {k}')
-    print('\nWarning: High Severity Item Found\n')
+            print('\nWarning: High Severity Item Found\n')
+def google_oauth_search(displaymode, page):
+    print("Scanning for google OAUTH secrets...")
+    pagetext = page.text
+    gauth_pattern = r"(\"client_secret\":\"[a-zA-Z0-9-_]{24}\")"
+    for k in re.findall(gauth_pattern, pagetext):
+        if displaymode == 's' or 'b':
+            print('\nWarning: High Severity Item Found\n')
+            gauth_output = f'{curdir}\\Output\\GoogleOAUTHSecrets.txt'
+            if not exists(dirname(gauth_output)):
+                try:
+                    makedirs(dirname(gauth_output))
+                except OSError as racecondition:
+                    if racecondition.errno != errno.EEXIST:
+                        raise
+            with open(gauth_output, 'a') as gofile:
+                gofile.write(f'Potential Secret: {k}\n')
+        elif displaymode == 'p' or 'b':
+            print(f'Potential Secret: {k}')
+            print('\nWarning: High Severity Item Found\n')
 def google_api_search(displaymode, page):
     print("Scanning for google API keys...")
     pagetext = page.text
-    google_api_pattern =  'AIzaSy[0-9a-zA-Z_\\-]{33}'
+    google_api_pattern =  r'AIzaSy[0-9a-zA-Z_\\-]{33}'
     for k in re.findall(google_api_pattern, pagetext):
         if displaymode == 's' or 'b':
             gapi_output = f'{curdir}\\Output\\GoogleAPIPotentialKeys.txt'
@@ -146,7 +165,7 @@ def google_api_search(displaymode, page):
 def slack_api_search(displaymode, page):
     print("Scanning for slack API keys...")
     pagetext = page.text
-    slack_api_pattern = "xoxp-\\d+-\\d+-\\d+-[0-9a-f]+"
+    slack_api_pattern = r"xoxp-\\d+-\\d+-\\d+-[0-9a-f]+"
     for k in re.findall(slack_api_pattern, pagetext):
         if displaymode == 's' or 'b':
             sapi_output = f'{curdir}\\Output\\SlackAPIPotentialKeys.txt'
@@ -160,10 +179,27 @@ def slack_api_search(displaymode, page):
                 gofile.write(f'Potential Key: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Key: {k}')
+def slack_webhook_search(displaymode, page):
+    print("Scanning for slack webhooks...")
+    pagetext = page.text
+    slack_webhook_pattern = r"https://hooks.slack.com/services/T[a-zA-Z0-9_]{8}/B[a-zA-Z0-9_]{8}/[a-zA-Z0-9_]{24}"
+    for k in re.findall(slack_webhook_pattern, pagetext):
+        if displaymode == 's' or 'b':
+            slack_webhook_output = f'{curdir}\\Output\\SlackWebhooks.txt'
+            if not exists(dirname(slack_webhook_output)):
+                try:
+                    makedirs(dirname(slack_webhook_output))
+                except OSError as racecondition:
+                    if racecondition.errno != errno.EEXIST:
+                        raise
+            with open(slack_webhook_output, 'a') as gofile:
+                gofile.write(f'Potential Hook: {k}\n')
+        elif displaymode == 'p' or 'b':
+            print(f'Potential Hook: {k}')
 def slack_bot_search(displaymode, page):
     print("Scanning for slack bot tokens...")
     pagetext = page.text
-    slack_bot_pattern = "xoxb-\\d+-[0-9a-zA-Z]+"
+    slack_bot_pattern = r"xoxb-\\d+-[0-9a-zA-Z]+"
     for k in re.findall(slack_bot_pattern, pagetext):
         if displaymode == 's' or 'b':
             slack_bot_output = f'{curdir}\\Output\\SlackBotPotentialTokens.txt'
@@ -177,10 +213,27 @@ def slack_bot_search(displaymode, page):
                 gofile.write(f'Potential Token: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Token: {k}')
+def nonspecific_api_search(displaymode, page):
+    print("Scanning for nonspecific API keys...")
+    pagetext = page.text
+    nonspecific_pattern = r"[a|A][p|P][i|I][_]?[k|K][e|E][y|Y].{0,30}['\"\\s][0-9a-zA-Z]{32,45}['\"\\s]"
+    for k in re.findall(nonspecific_pattern, pagetext):
+        if displaymode == 's' or 'b':
+            nonspecific_output = f'{curdir}\\Output\\NonspecificPotentialKeys.txt'
+            if not exists(dirname(nonspecific_output)):
+                try:
+                    makedirs(dirname(nonspecific_output))
+                except OSError as racecondition:
+                    if racecondition.errno != errno.EEXIST:
+                        raise
+            with open(nonspecific_output, 'a') as gofile:
+                gofile.write(f'Potential Key: {k}\n')
+        elif displaymode == 'p' or 'b':
+            print(f'Potential Key: {k}')
 def discord_bot_search(displaymode, page):
     print("Scanning for discord bot tokens...")
     pagetext = page.text
-    discord_token_pattern = "([\w\-\.]+[\-\.][\w\-\.]+)"
+    discord_token_pattern = r"([\w\-\.]+[\-\.][\w\-\.]+)"
     for k in re.findall(discord_token_pattern, pagetext):
         if displaymode == 's' or 'b':
             discord_bot_output = f'{curdir}\\Output\\DiscordBotPotentialTokens.txt'
@@ -194,10 +247,27 @@ def discord_bot_search(displaymode, page):
                 gofile.write(f'Potential Token: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Token: {k}')
+def discord_webhook_search(displaymode, page):
+    print("Scanning for discord webhooks...")
+    pagetext = page.text
+    discord_webhook_pattern = r"(https:\/\/discordapp\.com\/api\/webhooks\/[\d]+\/[\w]+)"
+    for k in re.findall(discord_webhook_pattern, pagetext):
+        if displaymode == 's' or 'b':
+            discord_webhook_output = f'{curdir}\\Output\\DiscordWebhooks.txt'
+            if not exists(dirname(discord_webhook_output)):
+                try:
+                    makedirs(dirname(discord_webhook_output))
+                except OSError as racecondition:
+                    if racecondition.errno != errno.EEXIST:
+                        raise
+            with open(discord_webhook_output, 'a') as gofile:
+                gofile.write(f'Potential Hook: {k}\n')
+        elif displaymode == 'p' or 'b':
+            print(f'Potential Hook: {k}')
 def discord_nitro_search(displaymode, page):
     print("Scanning for discord nitro links...")
     pagetext = page.text
-    discord_nitro_pattern = "(https:\/\/discord\.gift\/.+[a-z{1,16}])"
+    discord_nitro_pattern = r"(https:\/\/discord\.gift\/.+[a-z{1,16}])"
     for k in re.findall(discord_nitro_pattern, pagetext):
         if displaymode == 's' or 'b':
             discord_nitro_output = f'{curdir}\\Output\\DiscordNitroPotentialLinks.txt'
@@ -214,7 +284,7 @@ def discord_nitro_search(displaymode, page):
 def redis_search(displaymode, page):
     print("Scanning for Redis URLs...")
     pagetext = page.text
-    redis_pattern = 'redis://[0-9a-zA-Z:@.\\-]+'
+    redis_pattern = r'redis://[0-9a-zA-Z:@.\\-]+'
     for k in re.findall(redis_pattern, pagetext):
         if displaymode == 's' or 'b':
             redis_output = f'{curdir}\\Output\\RedisLinks.txt'
@@ -229,6 +299,80 @@ def redis_search(displaymode, page):
         elif displaymode == 'p' or 'b':
             print(f'Potential link: {k}')
     print('\nWarning: High Severity Item Found\n')
+def ssh_keys_search(displaymode, page):
+    print("Scanning for SSH Keys...")
+    pagetext = page.text
+    ssh_keys_identifiers = ["-----BEGIN OPENSSH PRIVATE KEY-----", "-----BEGIN DSA PRIVATE KEY-----", "-----BEGIN EC PRIVATE KEY-----"]
+    for pattern in set(ssh_keys_identifiers):
+        if pattern in pagetext:
+            if displaymode == 's' or 'b':
+                ssh_output = f'{curdir}\\Output\\SSHKeys.txt'
+                if not exists(dirname(ssh_output)):
+                    try:
+                        makedirs(dirname(ssh_output))
+                    except OSError as racecondition:
+                        if racecondition.errno != errno.EEXIST:
+                            raise
+                with open(ssh_output, 'a') as gofile:
+                    gofile.write(f'SSH Key: {pattern}\n')
+            elif displaymode == 'p' or 'b':
+                print(f'SSH Key: {pattern}')
+            print('\nWarning: High Severity Item Found\n')
+def heroku_search(displaymode, page):
+    print("Scanning for Heroku API keys...")
+    pagetext = page.text
+    heroku_pattern = r"[h|H][e|E][r|R][o|O][k|K][u|U].{0,30}[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}"
+    for k in re.findall(heroku_pattern, pagetext):
+        if displaymode == 's' or 'b':
+            heroku_output = f'{curdir}\\Output\\HerokuKeys.txt'
+            if not exists(dirname(heroku_output)):
+                try:
+                    makedirs(dirname(heroku_output))
+                except OSError as racecondition:
+                    if racecondition.errno != errno.EEXIST:
+                        raise
+            with open(heroku_output, 'a') as gofile:
+                gofile.write(f'Potential Key: {k}\n')
+        elif displaymode == 'p' or 'b':
+            print(f'Potential Key: {k}')
+def facebook_OAUTH(displaymode, page):
+    print("Scanning for facebook OAUTH secrets...")
+    pagetext = page.text
+    fauth_pattern = r"[f|F][a|A][c|C][e|E][b|B][o|O][o|O][k|K].{0,30}['\"\\s][0-9a-f]{32}['\"\\s]"
+    for k in re.findall(fauth_pattern, pagetext):
+        if displaymode == 's' or 'b':
+            print('\nWarning: High Severity Item Found\n')
+            fauth_output = f'{curdir}\\Output\\FacebookOAUTHSecrets.txt'
+            if not exists(dirname(fauth_output)):
+                try:
+                    makedirs(dirname(fauth_output))
+                except OSError as racecondition:
+                    if racecondition.errno != errno.EEXIST:
+                        raise
+            with open(fauth_output, 'a') as gofile:
+                gofile.write(f'Potential Secret: {k}\n')
+        elif displaymode == 'p' or 'b':
+            print(f'Potential Secret: {k}')
+            print('\nWarning: High Severity Item Found\n')
+def twilio_search(displaymode, page):
+    print("Scanning for twilio keys...")
+    pagetext = page.text
+    twilio_pattern = r"SK[a-z0-9]{32}"
+    for k in re.findall(twilio_pattern, pagetext):
+        if displaymode == 's' or 'b':
+            twilio_output = f'{curdir}\\Output\\TwilioKeys.txt'
+            if not exists(dirname(twilio_output)):
+                try:
+                    makedirs(dirname(twilio_output))
+                except OSError as racecondition:
+                    if racecondition.errno != errno.EEXIST:
+                        raise
+            with open(twilio_output, 'a') as gofile:
+                gofile.write(f'Potential Key: {k}\n')
+        elif displaymode == 'p' or 'b':
+            print(f'Potential Key: {k}')
+
+
 
 def random_headers():
     return {'User-Agent': choice(user_agents),'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'}
@@ -260,7 +404,7 @@ def connect(url):
         else:
             print_genericerror()
         return 'connection_failed'
-def scrape(scrape_input_method, displaymode, limiter):
+def scrape(scrape_input_method, displaymode, limiter, cooldown):
     if scrape_input_method.lower() == 'm':
         url = input("Enter the URL: ")
         urlpage = connect(url)
@@ -271,16 +415,23 @@ def scrape(scrape_input_method, displaymode, limiter):
             print('Status: [200], Searching for API Keys...')
             shodan_search(displaymode, urlpage)
             github_search(displaymode, urlpage)
-            shodan_search(displaymode, urlpage)
-            github_search(displaymode, urlpage)
             AWS_search(displaymode, urlpage)
             google_access_token_search(displaymode, urlpage)
+            google_oauth_search(displaymode, urlpage)
             google_access_token_search(displaymode, urlpage)
             google_api_search(displaymode, urlpage)
             slack_bot_search(displaymode, urlpage)
             slack_api_search(displaymode, urlpage)
+            slack_webhook_search(displaymode, urlpage)
+            nonspecific_api_search(displaymode, urlpage)
             discord_bot_search(displaymode, urlpage)
+            discord_webhook_search(displaymode, urlpage)
             discord_nitro_search(displaymode, urlpage)
+            redis_search(displaymode, urlpage)
+            ssh_keys_search(displaymode, urlpage)
+            heroku_search(displaymode, urlpage)
+            facebook_OAUTH(displaymode, urlpage)
+            twilio_search(displaymode, urlpage)
             print("Scanning complete.")
 
     else:
@@ -308,6 +459,8 @@ def scrape(scrape_input_method, displaymode, limiter):
                     AWS_search(displaymode, urlpage)
                     print(f"Search complete, ratelimiting for {limiter} seconds")
                     sleep(limiter)
+                    google_oauth_search(displaymode, urlpage)
+                    sleep(limiter)
                     google_access_token_search(displaymode, urlpage)
                     print(f"Search complete, ratelimiting for {limiter} seconds")
                     sleep(limiter)
@@ -320,6 +473,8 @@ def scrape(scrape_input_method, displaymode, limiter):
                     slack_bot_search(displaymode, urlpage)
                     print(f"Search complete, ratelimiting for {limiter} seconds")
                     sleep(limiter)
+                    slack_webhook_search(displaymode, urlpage)
+                    sleep(limiter)
                     slack_api_search(displaymode, urlpage)
                     print(f"Search complete, ratelimiting for {limiter} seconds")
                     sleep(limiter)
@@ -329,6 +484,17 @@ def scrape(scrape_input_method, displaymode, limiter):
                     discord_nitro_search(displaymode,urlpage)
                     print(f"Search complete, ratelimiting for {limiter} seconds")
                     sleep(limiter)
+                    redis_search(displaymode, urlpage)
+                    sleep(limiter)
+                    ssh_keys_search(displaymode, urlpage)
+                    sleep(limiter)
+                    heroku_search(displaymode, urlpage)
+                    sleep(limiter)
+                    facebook_OAUTH(displaymode, urlpage)
+                    sleep(limiter)
+                    twilio_search(displaymode, urlpage)
+                    sleep(cooldown)
+
 
 def load_config():
 
@@ -362,7 +528,8 @@ def load_config():
 displaymode = b
 [scraping_vars]
 scrape_input_method = m
-limiter = 5''')
+limiter = 5
+cooldown = 30''')
         config_files['Default Configuration'] = 1
         count += 1
     for k in config_files.keys():
@@ -386,8 +553,9 @@ limiter = 5''')
     # Scraping Variables
     scrape_input_method = parser.get('scraping_vars', 'scrape_input_method')
     limiter = int(parser.get('scraping_vars', 'limiter'))
+    cooldown = int(parser.get('scraping_vars', 'cooldown'))
 
-    return displaymode,scrape_input_method,limiter
+    return displaymode,scrape_input_method,limiter,cooldown
 def manual_setup():
     while True:
         displaymode = input("[p]rint to screen, [s]ave to file, or [b]oth: ")
@@ -407,6 +575,16 @@ def manual_setup():
         try:
             limiter = int(input("Enter the time between requests, in seconds: "))
             if limiter < 0:
+                continue
+            break
+        except ValueError:
+            print("Invalid Input. Enter a positive integer.")
+            continue
+            
+    while True:
+        try:
+            cooldown = int(input("Enter the time URL searches, in seconds: "))
+            if cooldown < 0:
                 continue
             break
         except ValueError:
@@ -435,15 +613,16 @@ displaymode = {displaymode}
 [scraping_vars]
 scrape_input_method = {scrape_input_method}
 limiter = {limiter}
+cooldown = {cooldown}
 ''')
                 break
 
-    return displaymode,scrape_input_method,limiter
+    return displaymode,scrape_input_method,limiter,cooldown
 def main():
     while True:
         initchoice = input("[L]oad config file or [m]anually enter?: ")
         if initchoice.lower() == 'l':
-            displaymode,scrape_input_method,limiter = load_config()
+            displaymode,scrape_input_method,limiter,cooldown = load_config()
             if scrape_input_method == 'f':
                 while True:
                     addressfile = input("Enter the full path to the address file: ")
@@ -454,13 +633,13 @@ def main():
                         continue
             break
         elif initchoice.lower() == 'm':
-            displaymode,scrape_input_method,limiter = manual_setup()
+            displaymode,scrape_input_method,limiter,cooldown = manual_setup()
             break
         else:
             print("Invalid Input.")
             continue
 
-    scrape(scrape_input_method, displaymode, limiter)
+    scrape(scrape_input_method, displaymode, limiter, cooldown)
 
 if __name__ == '__main__':
     main()
