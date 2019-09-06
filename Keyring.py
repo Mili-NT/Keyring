@@ -8,6 +8,9 @@ from os.path import isfile, join, isdir, exists, dirname
 import shodan
 from time import sleep
 import codecs
+
+# TODO: Add per-run stats
+
 #
 # Global Variables
 #
@@ -62,7 +65,7 @@ def shodan_search(displaymode, page):
                 except OSError as racecondition:
                     if racecondition.errno != errno.EEXIST:
                         raise
-            with open(shodan_output, 'w') as sofile:
+            with open(shodan_output, 'a') as sofile:
                 sofile.write('----------VALID KEYS----------')
                 for pkey in valid_paid_keys.keys():
                     sofile.write(f"Key: {pkey}\nCredits (scan, query): {valid_paid_keys[pkey][0]}, {valid_paid_keys[pkey][1]}\n\n")
@@ -82,7 +85,7 @@ def github_search(displaymode, page):
                 except OSError as racecondition:
                     if racecondition.errno != errno.EEXIST:
                         raise
-            with open(github_output, 'w') as gofile:
+            with open(github_output, 'a') as gofile:
                 gofile.write(f'Potential Key: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Key: {k}')
@@ -92,34 +95,37 @@ def AWS_search(displaymode, page):
     pagetext = page.text
     for k in re.findall(aws_pattern, pagetext):
         if displaymode == 's' or 'b':
-            aws_output = f'{curdir}\\Output\\AWSPotentialKeys.txt'
+            aws_output = f'{curdir}\\Output\\AWSPotentialTokens.txt'
             if not exists(dirname(aws_output)):
                 try:
                     makedirs(dirname(aws_output))
                 except OSError as racecondition:
                     if racecondition.errno != errno.EEXIST:
                         raise
-            with open(aws_output, 'w') as gofile:
-                gofile.write(f'Potential Key: {k}\n')
+            with open(aws_output, 'a') as gofile:
+                gofile.write(f'Potential Tokens: {k}\n')
         elif displaymode == 'p' or 'b':
-            print(f'Potential Key: {k}')
+            print(f'Potential Token: {k}')
+    print('\nWarning: High Severity Item Found\n')
 def google_access_token_search(displaymode, page):
     print("Scanning for google access tokens...")
     pagetext = page.text
     gat_pattern = 'ya29.[0-9a-zA-Z_\\-]{68}'
     for k in re.findall(gat_pattern, pagetext):
         if displaymode == 's' or 'b':
-            gat_output = f'{curdir}\\Output\\GATPotentialKeys.txt'
+            print('\nWarning: High Severity Item Found\n')
+            gat_output = f'{curdir}\\Output\\GoogleAccessPotentialTokens.txt'
             if not exists(dirname(gat_output)):
                 try:
                     makedirs(dirname(gat_output))
                 except OSError as racecondition:
                     if racecondition.errno != errno.EEXIST:
                         raise
-            with open(gat_output, 'w') as gofile:
-                gofile.write(f'Potential Key: {k}\n')
+            with open(gat_output, 'a') as gofile:
+                gofile.write(f'Potential Token: {k}\n')
         elif displaymode == 'p' or 'b':
-            print(f'Potential Key: {k}')
+            print(f'Potential Token: {k}')
+    print('\nWarning: High Severity Item Found\n')
 def google_api_search(displaymode, page):
     print("Scanning for google API keys...")
     pagetext = page.text
@@ -133,7 +139,7 @@ def google_api_search(displaymode, page):
                 except OSError as racecondition:
                     if racecondition.errno != errno.EEXIST:
                         raise
-            with open(gapi_output, 'w') as gofile:
+            with open(gapi_output, 'a') as gofile:
                 gofile.write(f'Potential Key: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Key: {k}')
@@ -150,7 +156,7 @@ def slack_api_search(displaymode, page):
                 except OSError as racecondition:
                     if racecondition.errno != errno.EEXIST:
                         raise
-            with open(sapi_output, 'w') as gofile:
+            with open(sapi_output, 'a') as gofile:
                 gofile.write(f'Potential Key: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Key: {k}')
@@ -160,34 +166,34 @@ def slack_bot_search(displaymode, page):
     slack_bot_pattern = "xoxb-\\d+-[0-9a-zA-Z]+"
     for k in re.findall(slack_bot_pattern, pagetext):
         if displaymode == 's' or 'b':
-            slack_bot_output = f'{curdir}\\Output\\SlackBotPotentialKeys.txt'
+            slack_bot_output = f'{curdir}\\Output\\SlackBotPotentialTokens.txt'
             if not exists(dirname(slack_bot_output)):
                 try:
                     makedirs(dirname(slack_bot_output))
                 except OSError as racecondition:
                     if racecondition.errno != errno.EEXIST:
                         raise
-            with open(slack_bot_output, 'w') as gofile:
-                gofile.write(f'Potential Key: {k}\n')
+            with open(slack_bot_output, 'a') as gofile:
+                gofile.write(f'Potential Token: {k}\n')
         elif displaymode == 'p' or 'b':
-            print(f'Potential Key: {k}')
+            print(f'Potential Token: {k}')
 def discord_bot_search(displaymode, page):
     print("Scanning for discord bot tokens...")
     pagetext = page.text
     discord_token_pattern = "([\w\-\.]+[\-\.][\w\-\.]+)"
     for k in re.findall(discord_token_pattern, pagetext):
         if displaymode == 's' or 'b':
-            discord_bot_output = f'{curdir}\\Output\\DiscordBotPotentialKeys.txt'
+            discord_bot_output = f'{curdir}\\Output\\DiscordBotPotentialTokens.txt'
             if not exists(dirname(discord_bot_output)):
                 try:
                     makedirs(dirname(discord_bot_output))
                 except OSError as racecondition:
                     if racecondition.errno != errno.EEXIST:
                         raise
-            with open(discord_bot_output, 'w') as gofile:
-                gofile.write(f'Potential Key: {k}\n')
+            with open(discord_bot_output, 'a') as gofile:
+                gofile.write(f'Potential Token: {k}\n')
         elif displaymode == 'p' or 'b':
-            print(f'Potential Key: {k}')
+            print(f'Potential Token: {k}')
 def discord_nitro_search(displaymode, page):
     print("Scanning for discord nitro links...")
     pagetext = page.text
@@ -201,10 +207,28 @@ def discord_nitro_search(displaymode, page):
                 except OSError as racecondition:
                     if racecondition.errno != errno.EEXIST:
                         raise
-            with open(discord_nitro_output, 'w') as gofile:
+            with open(discord_nitro_output, 'a') as gofile:
                 gofile.write(f'Potential link: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential link: {k}')
+def redis_search(displaymode, page):
+    print("Scanning for Redis URLs...")
+    pagetext = page.text
+    redis_pattern = 'redis://[0-9a-zA-Z:@.\\-]+'
+    for k in re.findall(redis_pattern, pagetext):
+        if displaymode == 's' or 'b':
+            redis_output = f'{curdir}\\Output\\RedisLinks.txt'
+            if not exists(dirname(redis_output)):
+                try:
+                    makedirs(dirname(redis_output))
+                except OSError as racecondition:
+                    if racecondition.errno != errno.EEXIST:
+                        raise
+            with open(redis_output, 'a') as gofile:
+                gofile.write(f'Potential link: {k}\n')
+        elif displaymode == 'p' or 'b':
+            print(f'Potential link: {k}')
+    print('\nWarning: High Severity Item Found\n')
 
 def random_headers():
     return {'User-Agent': choice(user_agents),'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'}
