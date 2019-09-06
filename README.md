@@ -9,7 +9,7 @@ Keyring is a tool to search a given URL for API Keys.
 - Google API (High Confidence, static characters)
 - Google Access Tokens (High Confidence, static characters)
 - AWS Access Tokens (High Confidence, static characters)
-- Discord Bot Tokens (not fully finished)
+- Discord Bot Tokens (High Confidence, static characters and substring sizes)
 ### TODO:
 -Add more keys (please send me either a sample key or regex for anything you want added)
 -get it working with github pages (or use the github API). High Priority.
