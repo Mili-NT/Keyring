@@ -9,7 +9,7 @@ import shodan
 from time import sleep
 import codecs
 #
-# Patterns And Shiet
+# Global Variables
 #
 parser = ConfigParser()
 curdir = getcwd()
@@ -26,8 +26,8 @@ user_agents = [
     'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0']
 #
 # Global Functions
-# I know I should have made all of these one function, but didn't think of that until I got to the slack_bot_search one
-# ¯\_(ツ)_/¯
+# 
+
 
 def shodan_search(displaymode, page):
     print("Searching for Shodan keys...")
