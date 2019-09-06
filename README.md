@@ -22,4 +22,5 @@ Keyring is a tool to search a given URL for API Keys and other secrets.
 
 ### TODO:
 - Add more keys (please send me either a sample key or regex for anything you want added)
+- Mulithreading
 - get it working with github pages (or use the github API). High Priority.
