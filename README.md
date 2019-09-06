@@ -11,6 +11,13 @@ Keyring is a tool to search a given URL for API Keys and other secrets.
 - AWS Access Tokens (High Confidence, static characters)
 - Discord Bot Tokens (High Confidence, static characters and substring sizes)
 - Discord Nitro Links (High Confidence, static characters and substring sizes)
+
+## Severity Rating (1-10):
+- Access Tokens (10, can result in direct compromise of related systems)
+- Bot Tokens (6, can result in sensitive information being viewed, members being banned/kicked/etc.)
+- API Keys (5, can result in either loss of credits or sensitive information being views)
+- Nitro Links (1 or 0. If intended for giveaway, perfect. If not, can result in loss of 10 dollars.)
+
 ### TODO:
 - Add more keys (please send me either a sample key or regex for anything you want added)
 - get it working with github pages (or use the github API). High Priority.
