@@ -26,7 +26,7 @@ user_agents = [
     'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0']
 #
 # Global Functions
-# 
+#
 
 def shodan_search(displaymode, page):
     print("Searching for Shodan keys...")
@@ -52,8 +52,8 @@ def shodan_search(displaymode, page):
                     valid_unpaid_keys.append(key)
             except Exception as e:
                 print(f"{e}.")
-    
-    
+
+
         if displaymode == 's' or displaymode == 'b':
             shodan_output = f'{curdir}\\Output\\ShodanKeys.txt'
             if not exists(dirname(shodan_output)):
@@ -191,8 +191,8 @@ def discord_bot_search(displaymode, page):
 def discord_nitro_search(displaymode, page):
     print("Scanning for discord nitro links...")
     pagetext = page.text
-    discordd_nitro_pattern = "(https?:\/\/)?(www\.)?(discord\.(gift))\/.+[a-z{1,16}]"
-    for k in re.findall(discordd_nitro_pattern, pagetext):
+    discord_nitro_pattern = "(https:\/\/discord\.gift\/.+[a-z{1,16}])"
+    for k in re.findall(discord_nitro_pattern, pagetext):
         if displaymode == 's' or 'b':
             discord_nitro_output = f'{curdir}\\Output\\DiscordNitroPotentialLinks.txt'
             if not exists(dirname(discord_nitro_output)):
