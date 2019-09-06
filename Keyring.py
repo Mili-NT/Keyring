@@ -28,7 +28,6 @@ user_agents = [
 # Global Functions
 # 
 
-
 def shodan_search(displaymode, page):
     print("Searching for Shodan keys...")
     shodan_pattern = r'\b[a-zA-Z0-9]{32}\b'
@@ -38,37 +37,38 @@ def shodan_search(displaymode, page):
         keyset.append(k)
     if not keyset:
         print("no keys found")
-    valid_paid_keys = {}
-    valid_unpaid_keys = []
-    for key in set(keyset):
-        api = shodan.Shodan(key)
-        try:
-            keydata = api.info()
-            usage_limits = keydata['usage_limits']
-            if keydata['plan'] == 'dev' or keydata['plan'] == 'edu':
-                credits_tuple = (usage_limits['scan_credits'], usage_limits['query_credits'])
-                valid_paid_keys[key] = credits_tuple
-            elif keydata['plan'] == 'oss':
-                valid_unpaid_keys.append(key)
-        except Exception as e:
-            print(f"{e}.")
-
-
-    if displaymode == 's' or displaymode == 'b':
-        shodan_output = f'{curdir}\\Output\\ShodanKeys.txt'
-        if not exists(dirname(shodan_output)):
+    else:
+        valid_paid_keys = {}
+        valid_unpaid_keys = []
+        for key in set(keyset):
+            api = shodan.Shodan(key)
             try:
-                makedirs(dirname(shodan_output))
-            except OSError as racecondition:
-                if racecondition.errno != errno.EEXIST:
-                    raise
-        with open(shodan_output, 'w') as sofile:
-            sofile.write('----------VALID KEYS----------')
-            for pkey in valid_paid_keys.keys():
-                sofile.write(f"Key: {pkey}\nCredits (scan, query): {valid_paid_keys[pkey][0]}, {valid_paid_keys[pkey][1]}\n\n")
-            sofile.write('----------UNPAID KEYS----------')
-            for upkeys in set(valid_unpaid_keys):
-                sofile.write(f'Key: {upkeys}')
+                keydata = api.info()
+                usage_limits = keydata['usage_limits']
+                if keydata['plan'] == 'dev' or keydata['plan'] == 'edu':
+                    credits_tuple = (usage_limits['scan_credits'], usage_limits['query_credits'])
+                    valid_paid_keys[key] = credits_tuple
+                elif keydata['plan'] == 'oss':
+                    valid_unpaid_keys.append(key)
+            except Exception as e:
+                print(f"{e}.")
+    
+    
+        if displaymode == 's' or displaymode == 'b':
+            shodan_output = f'{curdir}\\Output\\ShodanKeys.txt'
+            if not exists(dirname(shodan_output)):
+                try:
+                    makedirs(dirname(shodan_output))
+                except OSError as racecondition:
+                    if racecondition.errno != errno.EEXIST:
+                        raise
+            with open(shodan_output, 'w') as sofile:
+                sofile.write('----------VALID KEYS----------')
+                for pkey in valid_paid_keys.keys():
+                    sofile.write(f"Key: {pkey}\nCredits (scan, query): {valid_paid_keys[pkey][0]}, {valid_paid_keys[pkey][1]}\n\n")
+                sofile.write('----------UNPAID KEYS----------')
+                for upkeys in set(valid_unpaid_keys):
+                    sofile.write(f'Key: {upkeys}')
 def github_search(displaymode, page):
     print("Searching for Github keys...")
     github_api = '^\w{1,40}$'
@@ -306,7 +306,6 @@ def scrape(scrape_input_method, displaymode, limiter):
                     print(f"Search complete, ratelimiting for {limiter} seconds")
                     sleep(limiter)
 
-
 def load_config():
 
     while True:
@@ -438,10 +437,6 @@ def main():
             continue
 
     scrape(scrape_input_method, displaymode, limiter)
-
-
-
-
 
 if __name__ == '__main__':
     main()
