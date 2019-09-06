@@ -26,7 +26,8 @@ user_agents = [
     'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0']
 #
 # Global Functions
-#
+# I know I should have made all of these one function, but didnt think of that until I got to the slack_bot_search one
+# ¯\_(ツ)_/¯
 
 def shodan_search(displaymode, page):
     print("Searching for Shodan keys...")
@@ -170,8 +171,25 @@ def slack_bot_search(displaymode, page):
                 gofile.write(f'Potential Key: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Key: {k}')
-def discord_bot_keys(displaymode, page):
-    pass
+def discord_bot_search(displaymode, page):
+    print("Scanning for discord bot tokens...")
+    pagetext = page.text
+    discord_token_pattern = "([\w\-\.]+[\-\.][\w\-\.]+)"
+    for k in re.findall(discord_token_pattern, pagetext):
+        if displaymode == 's' or 'b':
+            discord_bot_output = f'{curdir}\\Output\\DiscordBotPotentialKeys.txt'
+            if not exists(dirname(discord_bot_output)):
+                try:
+                    makedirs(dirname(discord_bot_output))
+                except OSError as racecondition:
+                    if racecondition.errno != errno.EEXIST:
+                        raise
+            with open(discord_bot_output, 'w') as gofile:
+                gofile.write(f'Potential Key: {k}\n')
+        elif displaymode == 'p' or 'b':
+            print(f'Potential Key: {k}')
+
+
 
 def random_headers():
     return {'User-Agent': choice(user_agents),'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'}
