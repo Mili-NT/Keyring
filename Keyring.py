@@ -26,7 +26,7 @@ user_agents = [
     'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0']
 #
 # Global Functions
-# I know I should have made all of these one function, but didnt think of that until I got to the slack_bot_search one
+# I know I should have made all of these one function, but didn't think of that until I got to the slack_bot_search one
 # ¯\_(ツ)_/¯
 
 def shodan_search(displaymode, page):
@@ -188,8 +188,23 @@ def discord_bot_search(displaymode, page):
                 gofile.write(f'Potential Key: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Key: {k}')
-
-
+def discord_nitro_search(displaymode, page):
+    print("Scanning for discord nitro links...")
+    pagetext = page.text
+    discordd_nitro_pattern = "(https?:\/\/)?(www\.)?(discord\.(gift))\/.+[a-z{1,16}]"
+    for k in re.findall(discordd_nitro_pattern, pagetext):
+        if displaymode == 's' or 'b':
+            discord_nitro_output = f'{curdir}\\Output\\DiscordNitroPotentialLinks.txt'
+            if not exists(dirname(discord_nitro_output)):
+                try:
+                    makedirs(dirname(discord_nitro_output))
+                except OSError as racecondition:
+                    if racecondition.errno != errno.EEXIST:
+                        raise
+            with open(discord_nitro_output, 'w') as gofile:
+                gofile.write(f'Potential link: {k}\n')
+        elif displaymode == 'p' or 'b':
+            print(f'Potential link: {k}')
 
 def random_headers():
     return {'User-Agent': choice(user_agents),'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'}
@@ -232,6 +247,17 @@ def scrape(scrape_input_method, displaymode, limiter):
             print('Status: [200], Searching for API Keys...')
             shodan_search(displaymode, urlpage)
             github_search(displaymode, urlpage)
+            shodan_search(displaymode, urlpage)
+            github_search(displaymode, urlpage)
+            AWS_search(displaymode, urlpage)
+            google_access_token_search(displaymode, urlpage)
+            google_access_token_search(displaymode, urlpage)
+            google_api_search(displaymode, urlpage)
+            slack_bot_search(displaymode, urlpage)
+            slack_api_search(displaymode, urlpage)
+            discord_bot_search(displaymode, urlpage)
+            discord_nitro_search(displaymode, urlpage)
+            print("Scanning complete.")
 
     else:
         while True:
@@ -250,7 +276,34 @@ def scrape(scrape_input_method, displaymode, limiter):
                     print(f"[Line: {count}] Connection failed on host {line}")
                 else:
                     shodan_search(displaymode, urlpage)
+                    print(f"Search complete, ratelimiting for {limiter} seconds")
+                    sleep(limiter)
                     github_search(displaymode, urlpage)
+                    print(f"Search complete, ratelimiting for {limiter} seconds")
+                    sleep(limiter)
+                    AWS_search(displaymode, urlpage)
+                    print(f"Search complete, ratelimiting for {limiter} seconds")
+                    sleep(limiter)
+                    google_access_token_search(displaymode, urlpage)
+                    print(f"Search complete, ratelimiting for {limiter} seconds")
+                    sleep(limiter)
+                    google_access_token_search(displaymode, urlpage)
+                    print(f"Search complete, ratelimiting for {limiter} seconds")
+                    sleep(limiter)
+                    google_api_search(displaymode, urlpage)
+                    print(f"Search complete, ratelimiting for {limiter} seconds")
+                    sleep(limiter)
+                    slack_bot_search(displaymode, urlpage)
+                    print(f"Search complete, ratelimiting for {limiter} seconds")
+                    sleep(limiter)
+                    slack_api_search(displaymode, urlpage)
+                    print(f"Search complete, ratelimiting for {limiter} seconds")
+                    sleep(limiter)
+                    discord_bot_search(displaymode, urlpage)
+                    print(f"Search complete, ratelimiting for {limiter} seconds")
+                    sleep(limiter)
+                    discord_nitro_search(displaymode,urlpage)
+                    print(f"Search complete, ratelimiting for {limiter} seconds")
                     sleep(limiter)
 
 
