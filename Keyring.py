@@ -681,26 +681,26 @@ verbosity = {verbosity}
 
 def main():
 	try:
-    	while True:
-        	initchoice = input("[L]oad config file or [m]anually enter?: ")
-        	if initchoice.lower() == 'l':
-            	displaymode, scrape_input_method, limiter, repo_crawl, verbosity = load_config()
-            	if scrape_input_method == 'f':
-                	while True:
-                    	addressfile = input("Enter the full path to the address file: ")
-                    	if isfile(addressfile) is True:
-                        	break
-                    	else:
-                        	lib.PrintError("No such file found.")
-                        	continue
-            	break
-        	elif initchoice.lower() == 'm':
-            	displaymode,scrape_input_method,limiter,repo_crawl,verbosity = manual_setup()
-            	break
-        	else:
-            	lib.PrintError("Invalid Input.")
-            	continue
-    	scrape(scrape_input_method, displaymode, limiter, repo_crawl, verbosity)
+		while True:
+			initchoice = input("[L]oad config file or [m]anually enter?: ")
+			if initchoice.lower() == 'l':
+				displaymode, scrape_input_method, limiter, repo_crawl, verbosity = load_config()
+				if scrape_input_method == 'f':
+					while True:
+						addressfile = input("Enter the full path to the address file: ")
+						if isfile(addressfile) is True:
+							break
+						else:
+							lib.PrintError("No such file found.")
+							continue
+				break
+			elif initchoice.lower() == 'm':
+				displaymode,scrape_input_method,limiter,repo_crawl,verbosity = manual_setup()
+				break
+			else:
+				lib.PrintError("Invalid Input.")
+				continue
+		scrape(scrape_input_method, displaymode, limiter, repo_crawl, verbosity)
 	except KeyboardError:
 		lib.PrintError("Search canceled.")
 
