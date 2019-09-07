@@ -23,7 +23,7 @@ Keyring is a tool to search a given URL for API Keys and other secrets.
 
 ## Severity Rating (1-10):
 - Access Tokens (10: can result in direct compromise of related systems)
-- Redis URLs (10: can lead to database leaks)
+- Redis URLs (10: can lead to potentially severe leaks)
 - SSH Keys (9: can potentially lead to system access in systems with poorly configured access control)
 - OAUTH Secrets (7: can disclose sensitive information or lead to credential theft)
 - Bot Tokens and Webhooks (6: can result in sensitive information being viewed, members being banned/kicked/etc.)
