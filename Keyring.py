@@ -513,13 +513,22 @@ def scrape(scrape_input_method, displaymode, limiter,repo_crawl, verbosity):
         with open(url_file) as ufile:
             count = 0
             for line in ufile.readlines():
-                count += 1
-                urlpage = connect(line.rstrip())
-                if urlpage == 'connection failed':
-                    print(f"[Line: {count}] Connection failed on host {line}")
+                if repo_crawl is False:
+                    count += 1
+                    urlpage = connect(line.rstrip())
+                    if urlpage == 'connection failed':
+                        print(f"[Line: {count}] Connection failed on host {line}")
+                    else:
+                        search_execute(displaymode, urlpage)
+                        sleep(limiter)
                 else:
-                    search_execute(displaymode, urlpage)
-                    sleep(limiter)
+                    repository_list = get_repos(line)
+                    file_addresses = traverse_repos(repository_list, verbosity)
+                    executor = ThreadPoolExecutor(max_workers=len(file_addresses))
+                    for addr in set(file_addresses):
+                        urlpage = connect(addr)
+                        executor.submit(search_execute(displaymode, urlpage))
+                        sleep(limiter)
 
 
 def load_config():
