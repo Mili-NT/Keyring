@@ -8,8 +8,11 @@ from os.path import isfile, join, isdir, exists, dirname
 import shodan
 from time import sleep
 import codecs
+from bs4 import BeautifulSoup
+from concurrent.futures import ThreadPoolExecutor
 
-# TODO: Add multithreading
+# By Mili
+# Python 3.6.0
 
 #
 # Global Variables
@@ -27,6 +30,8 @@ user_agents = [
     'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36',
     'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
     'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0']
+baselink = 'https://github.com/'
+baseraw = 'https://raw.githubusercontent.com/'
 #
 # Global Functions
 #
@@ -404,7 +409,79 @@ def connect(url):
         else:
             print_genericerror()
         return 'connection_failed'
-def scrape(scrape_input_method, displaymode, limiter, cooldown):
+
+def get_repos(profilelink):
+    if profilelink.endswith('//'):
+        profilelink = profilelink[:len(profilelink)-1]
+    repos = profilelink + '?tab=repositories'
+    repos = repos.replace(' ','')
+    profilepage = connect(repos)
+    soup = BeautifulSoup(profilepage.text, 'html.parser')
+    hrefs = soup.findAll('a', href=True, itemprop="name codeRepository")
+    repolist = []
+    for h in hrefs:
+        repolink = baselink + str(h['href'])
+        repolist.append(repolink)
+    return repolist
+def traverse_repos(repolist, verbosity): # Here Be Recursion
+    fileaddrs = []
+    def spider_current_level(page):
+        dirnames = []
+        levelsoup = BeautifulSoup(page.text, 'html.parser')
+        try:
+            spans = levelsoup.findAll('span', {'class': "css-truncate css-truncate-target"})
+            for s in spans:
+                subtags = s.findAll('a', {'class': "js-navigation-open"}, href=True)
+                for st in subtags:
+                    if '/blob/' in st['href']:
+                        lnk = st['href'].replace('blob/', '')
+                        if verbosity == 'on':
+                            print(f"file: {lnk}")
+                        full = baseraw + lnk
+                        fileaddrs.append(full)
+                    else:
+                        if verbosity == 'on':
+                            print(f"dir: {st['href']}")
+                        dirnames.append(st['href'])
+
+            if len(dirnames) == 0:
+                if verbosity == 'on':
+                    print("Branch exhausted")
+            else:
+                for subdir in dirnames:
+                    subdir_addr = baselink + subdir
+                    subdir_page = connect(subdir_addr)
+                    spider_current_level(subdir_page)
+
+        except AttributeError:
+            # TODO: find and fix
+            print("Unusual file behavior detected, ending spidering with current resources...")
+    for i in repolist:
+        repopage = connect(i)
+        spider_current_level(repopage)
+    return fileaddrs
+def search_execute(displaymode,page):
+    shodan_search(displaymode, page)
+    github_search(displaymode, page)
+    AWS_search(displaymode, page)
+    google_access_token_search(displaymode, page)
+    google_oauth_search(displaymode, page)
+    google_access_token_search(displaymode, page)
+    google_api_search(displaymode, page)
+    slack_bot_search(displaymode, page)
+    slack_api_search(displaymode, page)
+    slack_webhook_search(displaymode, page)
+    nonspecific_api_search(displaymode, page)
+    discord_bot_search(displaymode, page)
+    discord_webhook_search(displaymode, page)
+    discord_nitro_search(displaymode, page)
+    redis_search(displaymode, page)
+    ssh_keys_search(displaymode, page)
+    heroku_search(displaymode, page)
+    facebook_OAUTH(displaymode, page)
+    twilio_search(displaymode, page)
+
+def scrape(scrape_input_method, displaymode, limiter,repo_crawl, verbosity):
     if scrape_input_method.lower() == 'm':
         url = input("Enter the URL: ")
         urlpage = connect(url)
@@ -413,25 +490,16 @@ def scrape(scrape_input_method, displaymode, limiter, cooldown):
             exit()
         else:
             print('Status: [200], Searching for API Keys...')
-            shodan_search(displaymode, urlpage)
-            github_search(displaymode, urlpage)
-            AWS_search(displaymode, urlpage)
-            google_access_token_search(displaymode, urlpage)
-            google_oauth_search(displaymode, urlpage)
-            google_access_token_search(displaymode, urlpage)
-            google_api_search(displaymode, urlpage)
-            slack_bot_search(displaymode, urlpage)
-            slack_api_search(displaymode, urlpage)
-            slack_webhook_search(displaymode, urlpage)
-            nonspecific_api_search(displaymode, urlpage)
-            discord_bot_search(displaymode, urlpage)
-            discord_webhook_search(displaymode, urlpage)
-            discord_nitro_search(displaymode, urlpage)
-            redis_search(displaymode, urlpage)
-            ssh_keys_search(displaymode, urlpage)
-            heroku_search(displaymode, urlpage)
-            facebook_OAUTH(displaymode, urlpage)
-            twilio_search(displaymode, urlpage)
+            if repo_crawl is False:
+                search_execute(displaymode, urlpage)
+            else:
+                repository_list = get_repos(url)
+                file_addresses = traverse_repos(repository_list, verbosity)
+                executor = ThreadPoolExecutor(max_workers=len(file_addresses))
+                for addr in set(file_addresses):
+                    urlpage = connect(addr)
+                    executor.submit(search_execute(displaymode,urlpage))
+                    sleep(limiter)
             print("Scanning complete.")
 
     else:
@@ -450,50 +518,8 @@ def scrape(scrape_input_method, displaymode, limiter, cooldown):
                 if urlpage == 'connection failed':
                     print(f"[Line: {count}] Connection failed on host {line}")
                 else:
-                    shodan_search(displaymode, urlpage)
-                    print(f"Search complete, ratelimiting for {limiter} seconds")
+                    search_execute(displaymode, urlpage)
                     sleep(limiter)
-                    github_search(displaymode, urlpage)
-                    print(f"Search complete, ratelimiting for {limiter} seconds")
-                    sleep(limiter)
-                    AWS_search(displaymode, urlpage)
-                    print(f"Search complete, ratelimiting for {limiter} seconds")
-                    sleep(limiter)
-                    google_oauth_search(displaymode, urlpage)
-                    sleep(limiter)
-                    google_access_token_search(displaymode, urlpage)
-                    print(f"Search complete, ratelimiting for {limiter} seconds")
-                    sleep(limiter)
-                    google_access_token_search(displaymode, urlpage)
-                    print(f"Search complete, ratelimiting for {limiter} seconds")
-                    sleep(limiter)
-                    google_api_search(displaymode, urlpage)
-                    print(f"Search complete, ratelimiting for {limiter} seconds")
-                    sleep(limiter)
-                    slack_bot_search(displaymode, urlpage)
-                    print(f"Search complete, ratelimiting for {limiter} seconds")
-                    sleep(limiter)
-                    slack_webhook_search(displaymode, urlpage)
-                    sleep(limiter)
-                    slack_api_search(displaymode, urlpage)
-                    print(f"Search complete, ratelimiting for {limiter} seconds")
-                    sleep(limiter)
-                    discord_bot_search(displaymode, urlpage)
-                    print(f"Search complete, ratelimiting for {limiter} seconds")
-                    sleep(limiter)
-                    discord_nitro_search(displaymode,urlpage)
-                    print(f"Search complete, ratelimiting for {limiter} seconds")
-                    sleep(limiter)
-                    redis_search(displaymode, urlpage)
-                    sleep(limiter)
-                    ssh_keys_search(displaymode, urlpage)
-                    sleep(limiter)
-                    heroku_search(displaymode, urlpage)
-                    sleep(limiter)
-                    facebook_OAUTH(displaymode, urlpage)
-                    sleep(limiter)
-                    twilio_search(displaymode, urlpage)
-                    sleep(cooldown)
 
 
 def load_config():
@@ -529,7 +555,8 @@ displaymode = b
 [scraping_vars]
 scrape_input_method = m
 limiter = 5
-cooldown = 30''')
+repo_crawl = False
+verbosity = off''')
         config_files['Default Configuration'] = 1
         count += 1
     for k in config_files.keys():
@@ -553,9 +580,14 @@ cooldown = 30''')
     # Scraping Variables
     scrape_input_method = parser.get('scraping_vars', 'scrape_input_method')
     limiter = int(parser.get('scraping_vars', 'limiter'))
-    cooldown = int(parser.get('scraping_vars', 'cooldown'))
+    repo_crawl = parser.get('scraping_vars', 'repo_crawl')
+    if repo_crawl == str('True'):
+        repo_crawl = True
+    else:
+        repo_crawl = False
+    verbosity = parser.get('scraping_vars', 'verbosity')
 
-    return displaymode,scrape_input_method,limiter,cooldown
+    return displaymode,scrape_input_method,limiter,repo_crawl,verbosity
 def manual_setup():
     while True:
         displaymode = input("[p]rint to screen, [s]ave to file, or [b]oth: ")
@@ -580,16 +612,30 @@ def manual_setup():
         except ValueError:
             print("Invalid Input. Enter a positive integer.")
             continue
-            
+
+    print("\nIf provided links to one (or multiple) github profiles, Keyring can crawl all repositories for secrets.")
+    print("However, this means Keyring WILL NOT FUNCTION CORRECTLY if provided links to other pages in the same text file.")
+    print("Large profiles will also take a fairly long time, as Keyring fetches ALL files from ALL repos.\n")
     while True:
-        try:
-            cooldown = int(input("Enter the time URL searches, in seconds: "))
-            if cooldown < 0:
-                continue
-            break
-        except ValueError:
-            print("Invalid Input. Enter a positive integer.")
+        repocrawlchoice = input("Enable repo crawling? [y]/[n]: ")
+        if repocrawlchoice.lower() not in ['y','n']:
+            print("Invalid Input.")
             continue
+        elif repocrawlchoice.lower() == 'y':
+            repo_crawl = True
+            while True:
+                print("Warning: Turning on verbosity will output a LOT when spidering large profiles.")
+                verbosity = input("Select verbosity for spidering: [off]/[on]: ")
+                if verbosity.lower() not in ['off','on']:
+                    print("Invalid Input.")
+                    continue
+                else:
+                    break
+            break
+        elif repocrawlchoice.lower() == 'n':
+            repo_crawl = False
+            verbosity = 'off'
+            break
 
     while True:
         savechoice = input("Save choices as config file? [y]/[n]: ")
@@ -613,16 +659,17 @@ displaymode = {displaymode}
 [scraping_vars]
 scrape_input_method = {scrape_input_method}
 limiter = {limiter}
-cooldown = {cooldown}
+repo_crawl = {repo_crawl}
+verbosity = {verbosity}
 ''')
                 break
 
-    return displaymode,scrape_input_method,limiter,cooldown
+    return displaymode,scrape_input_method,limiter,repo_crawl,verbosity
 def main():
     while True:
         initchoice = input("[L]oad config file or [m]anually enter?: ")
         if initchoice.lower() == 'l':
-            displaymode,scrape_input_method,limiter,cooldown = load_config()
+            displaymode,scrape_input_method,limiter,repo_crawl,verbosity = load_config()
             if scrape_input_method == 'f':
                 while True:
                     addressfile = input("Enter the full path to the address file: ")
@@ -633,13 +680,13 @@ def main():
                         continue
             break
         elif initchoice.lower() == 'm':
-            displaymode,scrape_input_method,limiter,cooldown = manual_setup()
+            displaymode,scrape_input_method,limiter,repo_crawl,verbosity = manual_setup()
             break
         else:
             print("Invalid Input.")
             continue
 
-    scrape(scrape_input_method, displaymode, limiter, cooldown)
+    scrape(scrape_input_method, displaymode, limiter, repo_crawl, verbosity)
 
 if __name__ == '__main__':
     main()
