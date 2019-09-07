@@ -14,11 +14,10 @@ from concurrent.futures import ThreadPoolExecutor
 # By Mili
 # Python 3.6.0
 
-#
 # Global Variables
-#
 parser = ConfigParser()
 curdir = getcwd()
+
 user_agents = [
     'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
     'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
@@ -29,13 +28,13 @@ user_agents = [
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36',
     'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36',
     'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0']
+    'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0'
+]
+
 baselink = 'https://github.com/'
 baseraw = 'https://raw.githubusercontent.com/'
-#
-# Global Functions
-#
 
+# Global Functions
 def shodan_search(displaymode, page):
     print("Searching for Shodan keys...")
     shodan_pattern = r'\b[a-zA-Z0-9]{32}\b'
@@ -60,8 +59,6 @@ def shodan_search(displaymode, page):
                     valid_unpaid_keys.append(key)
             except Exception as e:
                 print(f"{e}.")
-
-
         if displaymode == 's' or displaymode == 'b':
             shodan_output = f'{curdir}\\Output\\ShodanKeys.txt'
             if not exists(dirname(shodan_output)):
@@ -77,6 +74,7 @@ def shodan_search(displaymode, page):
                 sofile.write('----------UNPAID KEYS----------')
                 for upkeys in set(valid_unpaid_keys):
                     sofile.write(f'Key: {upkeys}')
+
 def github_search(displaymode, page):
     print("Searching for Github keys...")
     github_api = r"[g|G][i|I][t|T][h|H][u|U][b|B].{0,30}['\"\\s][0-9a-zA-Z]{35,40}['\"\\s]"
@@ -94,6 +92,7 @@ def github_search(displaymode, page):
                 gofile.write(f'Potential Key: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Key: {k}')
+
 def AWS_search(displaymode, page):
     print("Searching for AWS Access Keys...")
     aws_pattern = r"AKIA[0-9A-Z]{16}"
@@ -112,6 +111,7 @@ def AWS_search(displaymode, page):
         elif displaymode == 'p' or 'b':
             print(f'Potential Token: {k}')
     print('\nWarning: High Severity Item Found\n')
+
 def google_access_token_search(displaymode, page):
     print("Scanning for google access tokens...")
     pagetext = page.text
@@ -131,6 +131,7 @@ def google_access_token_search(displaymode, page):
         elif displaymode == 'p' or 'b':
             print(f'Potential Token: {k}')
             print('\nWarning: High Severity Item Found\n')
+
 def google_oauth_search(displaymode, page):
     print("Scanning for google OAUTH secrets...")
     pagetext = page.text
@@ -150,6 +151,7 @@ def google_oauth_search(displaymode, page):
         elif displaymode == 'p' or 'b':
             print(f'Potential Secret: {k}')
             print('\nWarning: High Severity Item Found\n')
+
 def google_api_search(displaymode, page):
     print("Scanning for google API keys...")
     pagetext = page.text
@@ -167,6 +169,7 @@ def google_api_search(displaymode, page):
                 gofile.write(f'Potential Key: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Key: {k}')
+
 def slack_api_search(displaymode, page):
     print("Scanning for slack API keys...")
     pagetext = page.text
@@ -184,6 +187,7 @@ def slack_api_search(displaymode, page):
                 gofile.write(f'Potential Key: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Key: {k}')
+
 def slack_webhook_search(displaymode, page):
     print("Scanning for slack webhooks...")
     pagetext = page.text
@@ -201,6 +205,7 @@ def slack_webhook_search(displaymode, page):
                 gofile.write(f'Potential Hook: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Hook: {k}')
+
 def slack_bot_search(displaymode, page):
     print("Scanning for slack bot tokens...")
     pagetext = page.text
@@ -218,6 +223,7 @@ def slack_bot_search(displaymode, page):
                 gofile.write(f'Potential Token: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Token: {k}')
+
 def nonspecific_api_search(displaymode, page):
     print("Scanning for nonspecific API keys...")
     pagetext = page.text
@@ -235,6 +241,7 @@ def nonspecific_api_search(displaymode, page):
                 gofile.write(f'Potential Key: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Key: {k}')
+
 def discord_bot_search(displaymode, page):
     print("Scanning for discord bot tokens...")
     pagetext = page.text
@@ -252,6 +259,7 @@ def discord_bot_search(displaymode, page):
                 gofile.write(f'Potential Token: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Token: {k}')
+
 def discord_webhook_search(displaymode, page):
     print("Scanning for discord webhooks...")
     pagetext = page.text
@@ -269,6 +277,7 @@ def discord_webhook_search(displaymode, page):
                 gofile.write(f'Potential Hook: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Hook: {k}')
+
 def discord_nitro_search(displaymode, page):
     print("Scanning for discord nitro links...")
     pagetext = page.text
@@ -286,6 +295,7 @@ def discord_nitro_search(displaymode, page):
                 gofile.write(f'Potential link: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential link: {k}')
+
 def redis_search(displaymode, page):
     print("Scanning for Redis URLs...")
     pagetext = page.text
@@ -304,6 +314,7 @@ def redis_search(displaymode, page):
         elif displaymode == 'p' or 'b':
             print(f'Potential link: {k}')
     print('\nWarning: High Severity Item Found\n')
+
 def ssh_keys_search(displaymode, page):
     print("Scanning for SSH Keys...")
     pagetext = page.text
@@ -323,6 +334,7 @@ def ssh_keys_search(displaymode, page):
             elif displaymode == 'p' or 'b':
                 print(f'SSH Key: {pattern}')
             print('\nWarning: High Severity Item Found\n')
+
 def heroku_search(displaymode, page):
     print("Scanning for Heroku API keys...")
     pagetext = page.text
@@ -340,6 +352,7 @@ def heroku_search(displaymode, page):
                 gofile.write(f'Potential Key: {k}\n')
         elif displaymode == 'p' or 'b':
             print(f'Potential Key: {k}')
+
 def facebook_OAUTH(displaymode, page):
     print("Scanning for facebook OAUTH secrets...")
     pagetext = page.text
@@ -359,6 +372,7 @@ def facebook_OAUTH(displaymode, page):
         elif displaymode == 'p' or 'b':
             print(f'Potential Secret: {k}')
             print('\nWarning: High Severity Item Found\n')
+
 def twilio_search(displaymode, page):
     print("Scanning for twilio keys...")
     pagetext = page.text
@@ -377,15 +391,14 @@ def twilio_search(displaymode, page):
         elif displaymode == 'p' or 'b':
             print(f'Potential Key: {k}')
 
-
-
 def random_headers():
     return {'User-Agent': choice(user_agents),'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'}
+
 def connect(url):
     def print_connecterror():
         print(f"""
-        Exception occurred: {e} 
-        Possible causes: Poor/Non-functioning Internet connection or {url} is unreachable 
+        Exception occurred: {e}
+        Possible causes: Poor/Non-functioning Internet connection or {url} is unreachable
         Possible fixes: Troubleshoot internet connection or check status of {url}
         """)
     def print_timeouterror():
@@ -423,6 +436,7 @@ def get_repos(profilelink):
         repolink = baselink + str(h['href'])
         repolist.append(repolink)
     return repolist
+
 def traverse_repos(repolist, verbosity): # Here Be Recursion
     fileaddrs = []
     def spider_current_level(page):
@@ -443,7 +457,6 @@ def traverse_repos(repolist, verbosity): # Here Be Recursion
                         if verbosity == 'on':
                             print(f"dir: {st['href']}")
                         dirnames.append(st['href'])
-
             if len(dirnames) == 0:
                 if verbosity == 'on':
                     print("Branch exhausted")
@@ -452,7 +465,6 @@ def traverse_repos(repolist, verbosity): # Here Be Recursion
                     subdir_addr = baselink + subdir
                     subdir_page = connect(subdir_addr)
                     spider_current_level(subdir_page)
-
         except AttributeError:
             # TODO: find and fix
             print("Unusual file behavior detected, ending spidering with current resources...")
@@ -460,6 +472,7 @@ def traverse_repos(repolist, verbosity): # Here Be Recursion
         repopage = connect(i)
         spider_current_level(repopage)
     return fileaddrs
+
 def search_execute(displaymode,page):
     shodan_search(displaymode, page)
     github_search(displaymode, page)
@@ -501,7 +514,6 @@ def scrape(scrape_input_method, displaymode, limiter,repo_crawl, verbosity):
                     executor.submit(search_execute(displaymode,urlpage))
                     sleep(limiter)
             print("Scanning complete.")
-
     else:
         while True:
             url_file = input("Enter the full path to the input file: ")
@@ -530,9 +542,7 @@ def scrape(scrape_input_method, displaymode, limiter,repo_crawl, verbosity):
                         executor.submit(search_execute(displaymode, urlpage))
                         sleep(limiter)
 
-
 def load_config():
-
     while True:
         if isdir(f'{curdir}\\KRconfig') is False:
             print(f"Config directory not detected in {curdir}...")
@@ -547,7 +557,6 @@ def load_config():
                 continue
         else:
             break
-
     config_files = {}
     count = 0
     onlyfiles = [f for f in listdir(f'{curdir}\\KRconfig') if isfile(join(f'{curdir}\\KRconfig', f))]
@@ -582,7 +591,6 @@ verbosity = off''')
     for k in config_files.keys():
         if load_choice == config_files[k]:
             selected_file = k
-
     parser.read(f"{curdir}\\KRconfig\\{selected_file}", encoding='utf-8')
     # Initial Variables
     displaymode = parser.get('initial_vars', 'displaymode')
@@ -595,8 +603,8 @@ verbosity = off''')
     else:
         repo_crawl = False
     verbosity = parser.get('scraping_vars', 'verbosity')
-
     return displaymode,scrape_input_method,limiter,repo_crawl,verbosity
+
 def manual_setup():
     while True:
         displaymode = input("[p]rint to screen, [s]ave to file, or [b]oth: ")
@@ -604,14 +612,12 @@ def manual_setup():
             print("Invalid Input")
             continue
         break
-
     while True:
         scrape_input_method = input("[m]anual input (single url) or load from [f]ile: ")
         if scrape_input_method.lower() not in ['m', 'f']:
             print("Invalid Input")
             continue
         break
-
     while True:
         try:
             limiter = int(input("Enter the time between requests, in seconds: "))
@@ -621,7 +627,6 @@ def manual_setup():
         except ValueError:
             print("Invalid Input. Enter a positive integer.")
             continue
-
     print("\nIf provided links to one (or multiple) github profiles, Keyring can crawl all repositories for secrets.")
     print("However, this means Keyring WILL NOT FUNCTION CORRECTLY if provided links to other pages in the same text file.")
     print("Large profiles will also take a fairly long time, as Keyring fetches ALL files from ALL repos.\n")
@@ -645,7 +650,6 @@ def manual_setup():
             repo_crawl = False
             verbosity = 'off'
             break
-
     while True:
         savechoice = input("Save choices as config file? [y]/[n]: ")
         if savechoice.lower() == 'n':
@@ -659,7 +663,6 @@ def manual_setup():
                     break
                 else:
                     break
-
             configname = input("Enter the name for this configuration: ")
             with open(f'{curdir}\\KRconfig\\{configname}.ini', 'w') as cfile:
                 cfile.write(
@@ -672,8 +675,8 @@ repo_crawl = {repo_crawl}
 verbosity = {verbosity}
 ''')
                 break
-
     return displaymode,scrape_input_method,limiter,repo_crawl,verbosity
+
 def main():
     while True:
         initchoice = input("[L]oad config file or [m]anually enter?: ")
@@ -694,7 +697,6 @@ def main():
         else:
             print("Invalid Input.")
             continue
-
     scrape(scrape_input_method, displaymode, limiter, repo_crawl, verbosity)
 
 if __name__ == '__main__':
