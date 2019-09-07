@@ -399,19 +399,19 @@ def connect(url):
 	# TODO: Add Color
 	def PrintConnectError():
 		print(f"""
-		Exception occurred: {e}
-		Possible causes: Poor/Non-functioning Internet connection or {url} is unreachable
-		Possible fixes: Troubleshoot internet connection or check status of {url}
+Exception occurred: {e}
+Possible causes: Poor/Non-functioning Internet connection or {url} is unreachable
+Possible fixes: Troubleshoot internet connection or check status of {url}
 		""")
 	def PrintTimeoutError():
 		print(f"""
-		Exception occurred: {e}
-		Possible causes: Too many requests made to {url}
-		Possible fixes: Check firewall settings and check the status of {url}.
+Exception occurred: {e}
+Possible causes: Too many requests made to {url}
+Possible fixes: Check firewall settings and check the status of {url}.
 		""")
 	def PrintGenericError():
 		print(f"""
-		Exception occurred: {e}
+Exception occurred: {e}
 		""")
 	try:
 		page = requests.get(url, headers=random_headers())
@@ -475,7 +475,7 @@ def traverse_repos(repolist, verbosity): # Here Be Recursion
 		spider_current_level(repopage)
 	return fileaddrs
 
-def search_execute(displaymode,page):
+def search_execute(displaymode, page):
 	shodan_search(displaymode, page)
 	github_search(displaymode, page)
 	AWS_search(displaymode, page)
@@ -496,7 +496,7 @@ def search_execute(displaymode,page):
 	facebook_OAUTH(displaymode, page)
 	twilio_search(displaymode, page)
 
-def scrape(scrape_input_method, displaymode, limiter,repo_crawl, verbosity):
+def scrape(scrape_input_method, displaymode, limiter, repo_crawl, verbosity):
 	if scrape_input_method.lower() == 'm':
 		url = input("Enter the URL: ")
 		urlpage = connect(url)
@@ -521,6 +521,8 @@ def scrape(scrape_input_method, displaymode, limiter,repo_crawl, verbosity):
 			url_file = input("Enter the full path to the input file: ")
 			if isfile(url_file) is True:
 				break
+			elif str(url_file) == "":
+				lib.DoNothing()
 			else:
 				lib.PrintError("No Such File Found.")
 				continue
@@ -554,6 +556,8 @@ def load_config():
 				continue
 			elif cont.lower() == 'n':
 				exit()
+			elif cont == "":
+				lib.DoNothing()
 			else:
 				lib.PrintFailure("Invalid Input")
 				continue
@@ -580,7 +584,7 @@ verbosity = off''')
 		config_files['Default Configuration'] = 1
 		count += 1
 	for k in config_files.keys():
-		lib.PrintSuccess(f"[{config_files[k]}]: {k}")
+		print(f"[{config_files[k]}]: {k}")
 	while True:
 		try:
 			load_choice = int(input("Select which config file to load: "))
@@ -605,12 +609,12 @@ verbosity = off''')
 	else:
 		repo_crawl = False
 	verbosity = parser.get('scraping_vars', 'verbosity')
-	return displaymode,scrape_input_method,limiter,repo_crawl,verbosity
+	return displaymode, scrape_input_method, limiter, repo_crawl, verbosity
 
 def manual_setup():
 	while True:
 		displaymode = input("[p]rint to screen, [s]ave to file, or [b]oth: ")
-		if displaymode.lower() not in ['p','s','b']:
+		if displaymode.lower() not in ['p', 's', 'b']:
 			lib.PrintError("Invalid Input")
 			continue
 		break
@@ -642,7 +646,7 @@ def manual_setup():
 			while True:
 				lib.PrintHighSeverity("Warning: Turning on verbosity will output a LOT when spidering large profiles.")
 				verbosity = input("Select verbosity for spidering: [off]/[on]: ")
-				if verbosity.lower() not in ['off','on']:
+				if verbosity.lower() not in ['off', 'on']:
 					lib.PrintError("Invalid Input.")
 					continue
 				else:
@@ -695,8 +699,10 @@ def main():
 							continue
 				break
 			elif initchoice.lower() == 'm':
-				displaymode,scrape_input_method,limiter,repo_crawl,verbosity = manual_setup()
+				displaymode, scrape_input_method, limiter, repo_crawl, verbosity = manual_setup()
 				break
+			elif initchoice == "":
+				lib.DoNothing()
 			else:
 				lib.PrintError("Invalid Input.")
 				continue
