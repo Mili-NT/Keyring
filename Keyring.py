@@ -384,20 +384,20 @@ def random_headers():
 def connect(url):
     def print_connecterror():
         print(f"""
-    Exception occurred: {e} 
-    Possible causes: Poor/Non-functioning Internet connection or {url} is unreachable 
-    Possible fixes: Troubleshoot internet connection or check status of {url}
-            """)
+        Exception occurred: {e} 
+        Possible causes: Poor/Non-functioning Internet connection or {url} is unreachable 
+        Possible fixes: Troubleshoot internet connection or check status of {url}
+        """)
     def print_timeouterror():
         print(f"""
-    Exception occurred: {e}
-    Possible causes: Too many requests made to {url}
-    Possible fixes: Check firewall settings and check the status of {url}.
-            """)
+        Exception occurred: {e}
+        Possible causes: Too many requests made to {url}
+        Possible fixes: Check firewall settings and check the status of {url}.
+        """)
     def print_genericerror():
         print(f"""
-    Exception occurred: {e}
-            """)
+        Exception occurred: {e}
+        """)
     try:
         page = requests.get(url,headers=random_headers())
         return page
