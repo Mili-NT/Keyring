@@ -702,7 +702,7 @@ def main():
             	continue
     	scrape(scrape_input_method, displaymode, limiter, repo_crawl, verbosity)
 	except KeyboardError:
-		lib.PrintFailure("Search canceled.")
+		lib.PrintError("Search canceled.")
 
 if __name__ == '__main__':
     main()
