@@ -62,7 +62,7 @@ def shodan_search(displaymode, page):
 			except Exception as e:
 				lib.PrintError(f"{e}.")
 		if displaymode == 's' or displaymode == 'b':
-			shodan_output = f'{curdir}\\Output\\ShodanKeys.txt'
+			shodan_output = f'{curdir}/Output/ShodanKeys.txt'
 			if not exists(dirname(shodan_output)):
 				try:
 					makedirs(dirname(shodan_output))
@@ -83,7 +83,7 @@ def github_search(displaymode, page):
 	pagetext = page.text
 	for k in re.findall(github_api, pagetext):
 		if displaymode == 's' or 'b':
-			github_output = f'{curdir}\\Output\\GithubPotentialKeys.txt'
+			github_output = f'{curdir}/Output/GithubPotentialKeys.txt'
 			if not exists(dirname(github_output)):
 				try:
 					makedirs(dirname(github_output))
@@ -101,7 +101,7 @@ def AWS_search(displaymode, page):
 	pagetext = page.text
 	for k in re.findall(aws_pattern, pagetext):
 		if displaymode == 's' or 'b':
-			aws_output = f'{curdir}\\Output\\AWSPotentialTokens.txt'
+			aws_output = f'{curdir}/Output/AWSPotentialTokens.txt'
 			if not exists(dirname(aws_output)):
 				try:
 					makedirs(dirname(aws_output))
@@ -121,7 +121,7 @@ def google_access_token_search(displaymode, page):
 	for k in re.findall(gat_pattern, pagetext):
 		if displaymode == 's' or 'b':
 			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
-			gat_output = f'{curdir}\\Output\\GoogleAccessPotentialTokens.txt'
+			gat_output = f'{curdir}/Output/GoogleAccessPotentialTokens.txt'
 			if not exists(dirname(gat_output)):
 				try:
 					makedirs(dirname(gat_output))
@@ -141,7 +141,7 @@ def google_oauth_search(displaymode, page):
 	for k in re.findall(gauth_pattern, pagetext):
 		if displaymode == 's' or 'b':
 			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
-			gauth_output = f'{curdir}\\Output\\GoogleOAUTHSecrets.txt'
+			gauth_output = f'{curdir}/Output/GoogleOAUTHSecrets.txt'
 			if not exists(dirname(gauth_output)):
 				try:
 					makedirs(dirname(gauth_output))
@@ -160,7 +160,7 @@ def google_api_search(displaymode, page):
 	google_api_pattern =  r'AIzaSy[0-9a-zA-Z_\\-]{33}'
 	for k in re.findall(google_api_pattern, pagetext):
 		if displaymode == 's' or 'b':
-			gapi_output = f'{curdir}\\Output\\GoogleAPIPotentialKeys.txt'
+			gapi_output = f'{curdir}/Output/GoogleAPIPotentialKeys.txt'
 			if not exists(dirname(gapi_output)):
 				try:
 					makedirs(dirname(gapi_output))
@@ -178,7 +178,7 @@ def slack_api_search(displaymode, page):
 	slack_api_pattern = r"xoxp-\\d+-\\d+-\\d+-[0-9a-f]+"
 	for k in re.findall(slack_api_pattern, pagetext):
 		if displaymode == 's' or 'b':
-			sapi_output = f'{curdir}\\Output\\SlackAPIPotentialKeys.txt'
+			sapi_output = f'{curdir}/Output/SlackAPIPotentialKeys.txt'
 			if not exists(dirname(sapi_output)):
 				try:
 					makedirs(dirname(sapi_output))
@@ -196,7 +196,7 @@ def slack_webhook_search(displaymode, page):
 	slack_webhook_pattern = r"https://hooks.slack.com/services/T[a-zA-Z0-9_]{8}/B[a-zA-Z0-9_]{8}/[a-zA-Z0-9_]{24}"
 	for k in re.findall(slack_webhook_pattern, pagetext):
 		if displaymode == 's' or 'b':
-			slack_webhook_output = f'{curdir}\\Output\\SlackWebhooks.txt'
+			slack_webhook_output = f'{curdir}/Output/SlackWebhooks.txt'
 			if not exists(dirname(slack_webhook_output)):
 				try:
 					makedirs(dirname(slack_webhook_output))
@@ -214,7 +214,7 @@ def slack_bot_search(displaymode, page):
 	slack_bot_pattern = r"xoxb-\\d+-[0-9a-zA-Z]+"
 	for k in re.findall(slack_bot_pattern, pagetext):
 		if displaymode == 's' or 'b':
-			slack_bot_output = f'{curdir}\\Output\\SlackBotPotentialTokens.txt'
+			slack_bot_output = f'{curdir}/Output/SlackBotPotentialTokens.txt'
 			if not exists(dirname(slack_bot_output)):
 				try:
 					makedirs(dirname(slack_bot_output))
@@ -232,7 +232,7 @@ def nonspecific_api_search(displaymode, page):
 	nonspecific_pattern = r"[a|A][p|P][i|I][_]?[k|K][e|E][y|Y].{0,30}['\"\\s][0-9a-zA-Z]{32,45}['\"\\s]"
 	for k in re.findall(nonspecific_pattern, pagetext):
 		if displaymode == 's' or 'b':
-			nonspecific_output = f'{curdir}\\Output\\NonspecificPotentialKeys.txt'
+			nonspecific_output = f'{curdir}/Output/NonspecificPotentialKeys.txt'
 			if not exists(dirname(nonspecific_output)):
 				try:
 					makedirs(dirname(nonspecific_output))
@@ -250,7 +250,7 @@ def discord_bot_search(displaymode, page):
 	discord_token_pattern = r"([\w\-\.]+[\-\.][\w\-\.]+)"
 	for k in re.findall(discord_token_pattern, pagetext):
 		if displaymode == 's' or 'b':
-			discord_bot_output = f'{curdir}\\Output\\DiscordBotPotentialTokens.txt'
+			discord_bot_output = f'{curdir}/Output/DiscordBotPotentialTokens.txt'
 			if not exists(dirname(discord_bot_output)):
 				try:
 					makedirs(dirname(discord_bot_output))
@@ -268,7 +268,7 @@ def discord_webhook_search(displaymode, page):
 	discord_webhook_pattern = r"(https:\/\/discordapp\.com\/api\/webhooks\/[\d]+\/[\w]+)"
 	for k in re.findall(discord_webhook_pattern, pagetext):
 		if displaymode == 's' or 'b':
-			discord_webhook_output = f'{curdir}\\Output\\DiscordWebhooks.txt'
+			discord_webhook_output = f'{curdir}/Output/DiscordWebhooks.txt'
 			if not exists(dirname(discord_webhook_output)):
 				try:
 					makedirs(dirname(discord_webhook_output))
@@ -286,7 +286,7 @@ def discord_nitro_search(displaymode, page):
 	discord_nitro_pattern = r"(https:\/\/discord\.gift\/.+[a-z{1,16}])"
 	for k in re.findall(discord_nitro_pattern, pagetext):
 		if displaymode == 's' or 'b':
-			discord_nitro_output = f'{curdir}\\Output\\DiscordNitroPotentialLinks.txt'
+			discord_nitro_output = f'{curdir}/Output/DiscordNitroPotentialLinks.txt'
 			if not exists(dirname(discord_nitro_output)):
 				try:
 					makedirs(dirname(discord_nitro_output))
@@ -304,7 +304,7 @@ def redis_search(displaymode, page):
 	redis_pattern = r'redis://[0-9a-zA-Z:@.\\-]+'
 	for k in re.findall(redis_pattern, pagetext):
 		if displaymode == 's' or 'b':
-			redis_output = f'{curdir}\\Output\\RedisLinks.txt'
+			redis_output = f'{curdir}/Output/RedisLinks.txt'
 			if not exists(dirname(redis_output)):
 				try:
 					makedirs(dirname(redis_output))
@@ -324,7 +324,7 @@ def ssh_keys_search(displaymode, page):
 	for pattern in set(ssh_keys_identifiers):
 		if pattern in pagetext:
 			if displaymode == 's' or 'b':
-				ssh_output = f'{curdir}\\Output\\SSHKeys.txt'
+				ssh_output = f'{curdir}/Output/SSHKeys.txt'
 				if not exists(dirname(ssh_output)):
 					try:
 						makedirs(dirname(ssh_output))
@@ -343,7 +343,7 @@ def heroku_search(displaymode, page):
 	heroku_pattern = r"[h|H][e|E][r|R][o|O][k|K][u|U].{0,30}[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}"
 	for k in re.findall(heroku_pattern, pagetext):
 		if displaymode == 's' or 'b':
-			heroku_output = f'{curdir}\\Output\\HerokuKeys.txt'
+			heroku_output = f'{curdir}/Output/HerokuKeys.txt'
 			if not exists(dirname(heroku_output)):
 				try:
 					makedirs(dirname(heroku_output))
@@ -362,7 +362,7 @@ def facebook_OAUTH(displaymode, page):
 	for k in re.findall(fauth_pattern, pagetext):
 		if displaymode == 's' or 'b':
 			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
-			fauth_output = f'{curdir}\\Output\\FacebookOAUTHSecrets.txt'
+			fauth_output = f'{curdir}/Output/FacebookOAUTHSecrets.txt'
 			if not exists(dirname(fauth_output)):
 				try:
 					makedirs(dirname(fauth_output))
@@ -381,7 +381,7 @@ def twilio_search(displaymode, page):
 	twilio_pattern = r"SK[a-z0-9]{32}"
 	for k in re.findall(twilio_pattern, pagetext):
 		if displaymode == 's' or 'b':
-			twilio_output = f'{curdir}\\Output\\TwilioKeys.txt'
+			twilio_output = f'{curdir}/Output/TwilioKeys.txt'
 			if not exists(dirname(twilio_output)):
 				try:
 					makedirs(dirname(twilio_output))
@@ -549,7 +549,7 @@ def scrape(scrape_input_method, displaymode, limiter, repo_crawl, verbosity):
 
 def load_config():
 	while True:
-		if isdir(f'{curdir}\\KRconfig') is False:
+		if isdir(f'{curdir}/KRconfig') is False:
 			lib.PrintError(f"Config directory not detected in {curdir}...")
 			lib.PrintError(f"Please move KRconfig directory into {curdir}")
 			cont = input('Continue? [y/n]: ')
@@ -566,14 +566,14 @@ def load_config():
 			break
 	config_files = {}
 	count = 0
-	onlyfiles = [f for f in listdir(f'{curdir}\\KRconfig') if isfile(join(f'{curdir}\\KRconfig', f))]
+	onlyfiles = [f for f in listdir(f'{curdir}/KRconfig') if isfile(join(f'{curdir}/KRconfig', f))]
 	for file in onlyfiles:
 		if file.endswith('.ini'):
 			count += 1
 			config_files[file] = count
 	if count == 0:
 		lib.PrintStatus("No config files detected, making default...")
-		with codecs.open(f'{curdir}\\KRconfig\\defaultconfig.ini', 'w', 'utf-8') as dconf:
+		with codecs.open(f'{curdir}/KRconfig/defaultconfig.ini', 'w', 'utf-8') as dconf:
 			dconf.write(
 '''[initial_vars]
 displaymode = b
@@ -598,7 +598,7 @@ verbosity = off''')
 	for k in config_files.keys():
 		if load_choice == config_files[k]:
 			selected_file = k
-	parser.read(f"{curdir}\\KRconfig\\{selected_file}", encoding='utf-8')
+	parser.read(f"{curdir}/KRconfig/{selected_file}", encoding='utf-8')
 	# Initial Variables
 	displaymode = parser.get('initial_vars', 'displaymode')
 	# Scraping Variables
@@ -663,15 +663,15 @@ def manual_setup():
 			break
 		elif savechoice.lower() == 'y':
 			while True:
-				if isdir(f'{curdir}\\KRconfig') is False:
+				if isdir(f'{curdir}/KRconfig') is False:
 					lib.PrintError(f"Config directory not detected in {curdir}...")
 					lib.PrintStatus(f"Making config directory...")
-					mkdir(f'{curdir}\\KRconfig')
+					mkdir(f'{curdir}/KRconfig')
 					break
 				else:
 					break
 			configname = input("Enter the name for this configuration: ")
-			with open(f'{curdir}\\KRconfig\\{configname}.ini', 'w') as cfile:
+			with open(f'{curdir}/KRconfig/{configname}.ini', 'w') as cfile:
 				cfile.write(
 f'''[initial_vars]
 displaymode = {displaymode}
