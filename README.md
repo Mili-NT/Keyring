@@ -33,4 +33,4 @@ Keyring is a tool to search a given URL for API Keys and other secrets.
 ### TODO:
 - Add more keys (please send me either a sample key or regex for anything you want added)
 - Bug fixes (current: strange type behavior during directory spidering)
-- Large directory filtering for GitHub spidering (in progress)
+- Single repository spidering
