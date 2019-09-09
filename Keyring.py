@@ -611,6 +611,11 @@ verbosity = off''')
 		repo_crawl = True
 	else:
 		repo_crawl = False
+	directory_filtering = parser.get('scraping_vars', 'directory_filtering')
+	if directory_filtering == str('True'):
+		directory_filtering = True
+	else:
+		directroy_filtering = False
 	verbosity = parser.get('scraping_vars', 'verbosity')
 	return displaymode, scrape_input_method, limiter, repo_crawl, verbosity
 
@@ -655,6 +660,24 @@ def manual_setup():
 				else:
 					break
 			break
+			while True:
+				lib.PrintStatus("Repositories may contain large directories with no value in crawling, such as dependency folders.")
+				directory_filtering_status = input("Enable directory filtering: [y]/[n]: ")
+				if directory_filtering_status.lower() not in ['y','n']
+					lib.PrintError("Invalid Input.")
+					continue
+				elif directory_filtering_status.lower() == 'y':
+					directory_filtering = True
+					blacklisted_directories = []
+					blacklisted_directory_input = input("Enter the directory names you wish to filter (separated by a single comma): ").split(',')
+					for dirname in blacklisted_directory_input:
+						blacklisted_directories.append(dirname)
+					break
+				elif directory_filtering_status.lower() == 'n':
+					directory_filtering = False
+					blacklisted_directories = [] #Necessary? Placeholder in config file.
+					break
+
 		elif repocrawlchoice.lower() == 'n':
 			repo_crawl = False
 			verbosity = 'off'
@@ -681,10 +704,12 @@ displaymode = {displaymode}
 scrape_input_method = {scrape_input_method}
 limiter = {limiter}
 repo_crawl = {repo_crawl}
+directory_filtering = {directory_filtering}
+blacklisted_directories = {blacklisted_directories}
 verbosity = {verbosity}
 ''')
 				break
-	return displaymode, scrape_input_method, limiter, repo_crawl, verbosity
+	return displaymode, scrape_input_method, limiter, repo_crawl, directory_filtering, blacklisted_directories, verbosity
 
 def main():
 	try:
@@ -702,7 +727,7 @@ def main():
 							continue
 				break
 			elif initchoice.lower() == 'm':
-				displaymode, scrape_input_method, limiter, repo_crawl, verbosity = manual_setup()
+				displaymode, scrape_input_method, limiter, repo_crawl, directory_filtering, blacklisted_directories, verbosity = manual_setup()
 				break
 			elif initchoice == "":
 				lib.DoNothing()
