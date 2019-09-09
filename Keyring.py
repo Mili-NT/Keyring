@@ -689,7 +689,7 @@ def manual_setup():
 		except ValueError:
 			lib.PrintError("Invalid Input. Enter a positive integer.")
 			continue
-	lib.PrintStatus("\nIf provided links to one (or multiple) github profiles, Keyring can crawl all repositories for secrets.")
+	lib.PrintStatus("If provided links to one (or multiple) github profiles, Keyring can crawl all repositories for secrets.")
 	lib.PrintStatus("However, this means Keyring WILL NOT FUNCTION CORRECTLY if provided links to other pages in the same text file.")
 	lib.PrintStatus("Large profiles will also take a fairly long time, as Keyring fetches ALL files from ALL repos.\n")
 	while True:
