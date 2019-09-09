@@ -303,7 +303,7 @@ def redis_search(displaymode, page):
 	lib.PrintStatus("Scanning for Redis URLs...")
 	pagetext = page.text
 	redis_pattern = r'redis://[0-9a-zA-Z:@.\\-]+'
-	redis_artifacts = ['REDIS_PASSWORD', 'REDIS_CACHE_DATABASE', 'REDIS_HOST']
+	redis_artifacts = ['REDIS_PASSWORD', 'REDIS_CACHE_DATABASE', 'REDIS_HOST', 'REDIS_DATABASE']
 	for k in re.findall(redis_pattern, pagetext):
 		if displaymode == 's' or 'b':
 			lib.PrintHighSeverity('Warning: High Severity Item Found')
@@ -330,7 +330,7 @@ def redis_search(displaymode, page):
 					except OSError as racecondition:
 						if racecondition.errno != errno.EEXIST:
 							raise
-				with open(redis_artifacts_output, 'w') as rafile:
+				with open(redis_artifacts_output, 'a') as rafile:
 					rafile.write(f'Artifact found: {ra}')
 			elif displaymode == 'p' or 'b':
 				lib.PrintSuccess(f'Artifact Found: {ra}')
@@ -410,6 +410,26 @@ def twilio_search(displaymode, page):
 				gofile.write(f'Potential Key: {k}\n')
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential Key: {k}')
+
+def misc_database_secrets(displaymode, page):
+	lib.PrintStatus('Searching for miscellaneous database secrets...')
+	pagetext = page.text
+	database_secrets = ['DB_USER', 'DB_PASSWORD', 'SUPERUSER_NAME', 'SUPERUSER_PASSWORD', 'DB_NAME']
+	for ds in set(database_secrets):
+		if ds in pagetext:
+			lib.PrintHighSeverity('Warning: High Severity Item Found')
+			if displaymode == 's' or 'b':
+				db_output = f'{curdir}/Output/DatabaseSecrets.txt'
+				if not exists(dirname(db_output)):
+					try:
+						makedirs(dirname(db_output))
+					except OSError as racecondition:
+						if racecondition.errno != errno.EEXIST:
+							raise
+				with open(db_output, 'a') as gofile:
+					gofile.write(f'Database Secret: {ds}\n')
+			elif displaymode == 'p' or 'b':
+				print(f"Database secret: {ds}")
 
 def random_headers():
 	return { 'User-Agent': choice(user_agents), 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' }
