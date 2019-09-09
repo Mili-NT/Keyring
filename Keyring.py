@@ -707,7 +707,6 @@ def manual_setup():
 					continue
 				else:
 					break
-			break
 			while True:
 				lib.PrintStatus("Repositories may contain large directories with no value in crawling, such as dependency folders.")
 				directory_filtering_status = input("Enable directory filtering: [y]/[n]: ")
@@ -725,7 +724,7 @@ def manual_setup():
 					directory_filtering = False
 					blacklisted_directories = [] #placeholder for configparser
 					break
-
+			break
 		elif repocrawlchoice.lower() == 'n':
 			repo_crawl = False
 			directory_filtering = False
