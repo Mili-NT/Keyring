@@ -101,7 +101,7 @@ def AWS_search(displaymode, page):
 	pagetext = page.text
 	for k in re.findall(aws_pattern, pagetext):
 		if displaymode == 's' or 'b':
-			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
+			lib.PrintHighSeverity('Warning: High Severity Item Found')
 			aws_output = f'{curdir}/Output/AWSPotentialTokens.txt'
 			if not exists(dirname(aws_output)):
 				try:
@@ -113,7 +113,7 @@ def AWS_search(displaymode, page):
 				gofile.write(f'Potential Tokens: {k}\n')
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential Token: {k}')
-			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
+			lib.PrintHighSeverity('Warning: High Severity Item Found')
 
 def google_access_token_search(displaymode, page):
 	lib.PrintStatus("Scanning for google access tokens...")
@@ -121,7 +121,7 @@ def google_access_token_search(displaymode, page):
 	gat_pattern = r'ya29.[0-9a-zA-Z_\\-]{68}'
 	for k in re.findall(gat_pattern, pagetext):
 		if displaymode == 's' or 'b':
-			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
+			lib.PrintHighSeverity('Warning: High Severity Item Found')
 			gat_output = f'{curdir}/Output/GoogleAccessPotentialTokens.txt'
 			if not exists(dirname(gat_output)):
 				try:
@@ -133,7 +133,7 @@ def google_access_token_search(displaymode, page):
 				gofile.write(f'Potential Token: {k}\n')
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential Token: {k}')
-			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
+			lib.PrintHighSeverity('Warning: High Severity Item Found')
 
 def google_oauth_search(displaymode, page):
 	lib.PrintStatus("Scanning for google OAUTH secrets...")
@@ -141,7 +141,7 @@ def google_oauth_search(displaymode, page):
 	gauth_pattern = r"(\"client_secret\":\"[a-zA-Z0-9-_]{24}\")"
 	for k in re.findall(gauth_pattern, pagetext):
 		if displaymode == 's' or 'b':
-			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
+			lib.PrintHighSeverity('Warning: High Severity Item Found')
 			gauth_output = f'{curdir}/Output/GoogleOAUTHSecrets.txt'
 			if not exists(dirname(gauth_output)):
 				try:
@@ -153,7 +153,7 @@ def google_oauth_search(displaymode, page):
 				gofile.write(f'Potential Secret: {k}\n')
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential Secret: {k}')
-			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
+			lib.PrintHighSeverity('Warning: High Severity Item Found')
 
 def google_api_search(displaymode, page):
 	lib.PrintStatus("Scanning for google API keys...")
@@ -303,10 +303,11 @@ def redis_search(displaymode, page):
 	lib.PrintStatus("Scanning for Redis URLs...")
 	pagetext = page.text
 	redis_pattern = r'redis://[0-9a-zA-Z:@.\\-]+'
+	redis_artifacts = ['REDIS_PASSWORD', 'REDIS_CACHE_DATABASE', 'REDIS_HOST']
 	for k in re.findall(redis_pattern, pagetext):
 		if displaymode == 's' or 'b':
-			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
-			redis_output = f'{curdir}/Output/RedisLinks.txt'
+			lib.PrintHighSeverity('Warning: High Severity Item Found')
+			redis_output = f'{curdir}/Output/Redis/RedisLinks.txt'
 			if not exists(dirname(redis_output)):
 				try:
 					makedirs(dirname(redis_output))
@@ -317,7 +318,22 @@ def redis_search(displaymode, page):
 				gofile.write(f'Potential link: {k}\n')
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential link: {k}')
-			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
+			lib.PrintHighSeverity('Warning: High Severity Item Found')
+	for ra in set(redis_artifacts):
+		if ra in pagetext:
+			lib.PrintHighSeverity('Warning: High Severity Item Found')
+			if displaymode == 's' or 'b':
+				redis_artifacts_output = f'{curdir}/Output/Redis/RedisArtifacts.txt'
+				if not exists(dirname(redis_artifacts_output)):
+					try:
+						makedirs(dirname(redis_artifacts_output))
+					except OSError as racecondition:
+						if racecondition.errno != errno.EEXIST:
+							raise
+				with open(redis_artifacts_output, 'w') as rafile:
+					rafile.write(f'Artifact found: {ra}')
+			elif displaymode == 'p' or 'b':
+				lib.PrintSuccess(f'Artifact Found: {ra}')
 
 def ssh_keys_search(displaymode, page):
 	lib.PrintStatus("Scanning for SSH Keys...")
@@ -337,7 +353,7 @@ def ssh_keys_search(displaymode, page):
 					gofile.write(f'SSH Key: {pattern}\n')
 			elif displaymode == 'p' or 'b':
 				lib.PrintSuccess(f'SSH Key: {pattern}')
-			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
+			lib.PrintHighSeverity('Warning: High Severity Item Found')
 
 def heroku_search(displaymode, page):
 	lib.PrintStatus("Scanning for Heroku API keys...")
@@ -363,7 +379,7 @@ def facebook_OAUTH(displaymode, page):
 	fauth_pattern = r"[f|F][a|A][c|C][e|E][b|B][o|O][o|O][k|K].{0,30}['\"\\s][0-9a-f]{32}['\"\\s]"
 	for k in re.findall(fauth_pattern, pagetext):
 		if displaymode == 's' or 'b':
-			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
+			lib.PrintHighSeverity('Warning: High Severity Item Found')
 			fauth_output = f'{curdir}/Output/FacebookOAUTHSecrets.txt'
 			if not exists(dirname(fauth_output)):
 				try:
@@ -375,7 +391,7 @@ def facebook_OAUTH(displaymode, page):
 				gofile.write(f'Potential Secret: {k}\n')
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential Secret: {k}')
-			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
+			lib.PrintHighSeverity('Warning: High Severity Item Found')
 
 def twilio_search(displaymode, page):
 	lib.PrintStatus("Scanning for twilio keys...")
@@ -442,7 +458,7 @@ def get_repos(profilelink):
 		repolist.append(repolink)
 	return repolist
 
-def traverse_repos(repolist, verbosity): # Here Be Recursion
+def traverse_repos(repolist, directory_filtering, blacklisted_directories, verbosity): # Here Be Recursion
 	fileaddrs = []
 	def spider_current_level(page):
 		dirnames = []
@@ -461,7 +477,16 @@ def traverse_repos(repolist, verbosity): # Here Be Recursion
 					else:
 						if verbosity == 'on':
 							lib.PrintStatus(f"dir: {st['href']}")
-						dirnames.append(st['href'])
+						if directory_filtering is True:
+							slashcount = 0
+							for character in st['href']:
+								if character == '/':
+									slashcount += 1
+							directory_name = st['href'].split('/')[slashcount]
+							if directory_name not in set(blacklisted_directories):
+								dirnames.append(st['href'])
+						else:
+							dirnames.append(st['href'])
 			if len(dirnames) == 0:
 				if verbosity == 'on':
 					lib.PrintStatus("Branch exhausted")
@@ -499,7 +524,7 @@ def search_execute(displaymode, page):
 	facebook_OAUTH(displaymode, page)
 	twilio_search(displaymode, page)
 
-def scrape(scrape_input_method, displaymode, limiter, repo_crawl, verbosity):
+def scrape(scrape_input_method, displaymode, limiter, repo_crawl, directory_filtering, blacklisted_directories, verbosity):
 	if scrape_input_method.lower() == 'm':
 		url = input("Enter the URL: ")
 		urlpage = connect(url)
@@ -512,7 +537,7 @@ def scrape(scrape_input_method, displaymode, limiter, repo_crawl, verbosity):
 				search_execute(displaymode, urlpage)
 			else:
 				repository_list = get_repos(url)
-				file_addresses = traverse_repos(repository_list, verbosity)
+				file_addresses = traverse_repos(repository_list, directory_filtering, blacklisted_directories, verbosity)
 				executor = ThreadPoolExecutor(max_workers=len(file_addresses))
 				for addr in set(file_addresses):
 					urlpage = connect(addr)
@@ -542,7 +567,7 @@ def scrape(scrape_input_method, displaymode, limiter, repo_crawl, verbosity):
 						sleep(limiter)
 				else:
 					repository_list = get_repos(line)
-					file_addresses = traverse_repos(repository_list, verbosity)
+					file_addresses = traverse_repos(repository_list, directory_filtering, blacklisted_directories, verbosity)
 					executor = ThreadPoolExecutor(max_workers=len(file_addresses))
 					for addr in set(file_addresses):
 						urlpage = connect(addr)
@@ -583,6 +608,8 @@ displaymode = b
 scrape_input_method = m
 limiter = 5
 repo_crawl = False
+directory_filtering = False
+blacklisted_directories = []
 verbosity = off''')
 		config_files['Default Configuration'] = 1
 		count += 1
@@ -611,8 +638,14 @@ verbosity = off''')
 		repo_crawl = True
 	else:
 		repo_crawl = False
+	directory_filtering = parser.get('scraping_vars', 'directory_filtering')
+	if directory_filtering == str('True'):
+		directory_filtering = True
+	else:
+		directory_filtering = False
+	blacklisted_directories = parser.get('scraping_vars', 'blacklisted_directories')
 	verbosity = parser.get('scraping_vars', 'verbosity')
-	return displaymode, scrape_input_method, limiter, repo_crawl, verbosity
+	return displaymode, scrape_input_method, limiter, repo_crawl, directory_filtering, blacklisted_directories, verbosity
 
 def manual_setup():
 	while True:
@@ -655,8 +688,28 @@ def manual_setup():
 				else:
 					break
 			break
+			while True:
+				lib.PrintStatus("Repositories may contain large directories with no value in crawling, such as dependency folders.")
+				directory_filtering_status = input("Enable directory filtering: [y]/[n]: ")
+				if directory_filtering_status.lower() not in ['y','n']:
+					lib.PrintError("Invalid Input.")
+					continue
+				elif directory_filtering_status.lower() == 'y':
+					directory_filtering = True
+					blacklisted_directories = []
+					blacklisted_directory_input = input("Enter the directory names you wish to filter (separated by a single comma): ").split(',')
+					for directory in blacklisted_directory_input:
+						blacklisted_directories.append(directory)
+					break
+				elif directory_filtering_status.lower() == 'n':
+					directory_filtering = False
+					blacklisted_directories = [] #placeholder for configparser
+					break
+
 		elif repocrawlchoice.lower() == 'n':
 			repo_crawl = False
+			directory_filtering = False
+			blacklisted_directories = []
 			verbosity = 'off'
 			break
 	while True:
@@ -681,17 +734,19 @@ displaymode = {displaymode}
 scrape_input_method = {scrape_input_method}
 limiter = {limiter}
 repo_crawl = {repo_crawl}
+directory_filtering = {directory_filtering}
+blacklisted_directories = {blacklisted_directories}
 verbosity = {verbosity}
 ''')
 				break
-	return displaymode, scrape_input_method, limiter, repo_crawl, verbosity
+	return displaymode, scrape_input_method, limiter, repo_crawl, directory_filtering, blacklisted_directories, verbosity
 
 def main():
 	try:
 		while True:
 			initchoice = input("[L]oad config file or [m]anually enter?: ")
 			if initchoice.lower() == 'l':
-				displaymode, scrape_input_method, limiter, repo_crawl, verbosity = load_config()
+				displaymode, scrape_input_method, limiter, repo_crawl, directory_filtering, blacklisted_directories, verbosity = load_config()
 				if scrape_input_method == 'f':
 					while True:
 						addressfile = input("Enter the full path to the address file: ")
@@ -702,14 +757,14 @@ def main():
 							continue
 				break
 			elif initchoice.lower() == 'm':
-				displaymode, scrape_input_method, limiter, repo_crawl, verbosity = manual_setup()
+				displaymode, scrape_input_method, limiter, repo_crawl, directory_filtering, blacklisted_directories, verbosity = manual_setup()
 				break
 			elif initchoice == "":
 				lib.DoNothing()
 			else:
 				lib.PrintError("Invalid Input.")
 				continue
-		scrape(scrape_input_method, displaymode, limiter, repo_crawl, verbosity)
+		scrape(scrape_input_method, displaymode, limiter, repo_crawl, directory_filtering, blacklisted_directories, verbosity)
 	except KeyboardInterrupt:
 		print()
 		lib.PrintError("Search canceled.")
