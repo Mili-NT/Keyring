@@ -101,6 +101,7 @@ def AWS_search(displaymode, page):
 	pagetext = page.text
 	for k in re.findall(aws_pattern, pagetext):
 		if displaymode == 's' or 'b':
+			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
 			aws_output = f'{curdir}/Output/AWSPotentialTokens.txt'
 			if not exists(dirname(aws_output)):
 				try:
@@ -112,7 +113,7 @@ def AWS_search(displaymode, page):
 				gofile.write(f'Potential Tokens: {k}\n')
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential Token: {k}')
-	lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
+			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
 
 def google_access_token_search(displaymode, page):
 	lib.PrintStatus("Scanning for google access tokens...")
@@ -304,6 +305,7 @@ def redis_search(displaymode, page):
 	redis_pattern = r'redis://[0-9a-zA-Z:@.\\-]+'
 	for k in re.findall(redis_pattern, pagetext):
 		if displaymode == 's' or 'b':
+			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
 			redis_output = f'{curdir}/Output/RedisLinks.txt'
 			if not exists(dirname(redis_output)):
 				try:
@@ -315,7 +317,7 @@ def redis_search(displaymode, page):
 				gofile.write(f'Potential link: {k}\n')
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential link: {k}')
-	lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
+			lib.PrintHighSeverity('\nWarning: High Severity Item Found\n')
 
 def ssh_keys_search(displaymode, page):
 	lib.PrintStatus("Scanning for SSH Keys...")
