@@ -16,6 +16,7 @@ from os.path import isfile, join, isdir, exists, dirname
 # By Mili
 # Python 3.6.0
 
+
 # Global Variables
 parser = ConfigParser()
 curdir = getcwd()
@@ -37,8 +38,9 @@ baselink = 'https://github.com/'
 baseraw = 'https://raw.githubusercontent.com/'
 
 # Global Functions
-def shodan_search(displaymode, page):
-	lib.PrintStatus("Searching for Shodan keys...")
+def shodan_search(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Searching for Shodan keys...")
 	shodan_pattern = r'\b[a-zA-Z0-9]{32}\b'
 	pagetext = page.text
 	keyset = []
@@ -59,8 +61,8 @@ def shodan_search(displaymode, page):
 					valid_paid_keys[key] = credits_tuple
 				elif keydata['plan'] == 'oss':
 					valid_unpaid_keys.append(key)
-			except Exception as e:
-				lib.PrintError(f"{e}.")
+			except Exception:
+				pass
 		if displaymode == 's' or displaymode == 'b':
 			shodan_output = f'{curdir}/Output/ShodanKeys.txt'
 			if not exists(dirname(shodan_output)):
@@ -77,8 +79,9 @@ def shodan_search(displaymode, page):
 				for upkeys in set(valid_unpaid_keys):
 					sofile.write(f'Key: {upkeys}')
 
-def github_search(displaymode, page):
-	lib.PrintStatus("Searching for Github keys...")
+def github_search(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Searching for Github keys...")
 	github_api = r"[g|G][i|I][t|T][h|H][u|U][b|B].{0,30}['\"\\s][0-9a-zA-Z]{35,40}['\"\\s]"
 	pagetext = page.text
 	for k in re.findall(github_api, pagetext):
@@ -95,8 +98,9 @@ def github_search(displaymode, page):
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential Key: {k}')
 
-def AWS_search(displaymode, page):
-	lib.PrintStatus("Searching for AWS Access Keys...")
+def AWS_search(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Searching for AWS Access Keys...")
 	aws_pattern = r"AKIA[0-9A-Z]{16}"
 	pagetext = page.text
 	for k in re.findall(aws_pattern, pagetext):
@@ -115,8 +119,9 @@ def AWS_search(displaymode, page):
 			lib.PrintSuccess(f'Potential Token: {k}')
 			lib.PrintHighSeverity('Warning: High Severity Item Found')
 
-def google_access_token_search(displaymode, page):
-	lib.PrintStatus("Scanning for google access tokens...")
+def google_access_token_search(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Scanning for google access tokens...")
 	pagetext = page.text
 	gat_pattern = r'ya29.[0-9a-zA-Z_\\-]{68}'
 	for k in re.findall(gat_pattern, pagetext):
@@ -135,8 +140,9 @@ def google_access_token_search(displaymode, page):
 			lib.PrintSuccess(f'Potential Token: {k}')
 			lib.PrintHighSeverity('Warning: High Severity Item Found')
 
-def google_oauth_search(displaymode, page):
-	lib.PrintStatus("Scanning for google OAUTH secrets...")
+def google_oauth_search(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Scanning for google OAUTH secrets...")
 	pagetext = page.text
 	gauth_pattern = r"(\"client_secret\":\"[a-zA-Z0-9-_]{24}\")"
 	for k in re.findall(gauth_pattern, pagetext):
@@ -155,8 +161,9 @@ def google_oauth_search(displaymode, page):
 			lib.PrintSuccess(f'Potential Secret: {k}')
 			lib.PrintHighSeverity('Warning: High Severity Item Found')
 
-def google_api_search(displaymode, page):
-	lib.PrintStatus("Scanning for google API keys...")
+def google_api_search(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Scanning for google API keys...")
 	pagetext = page.text
 	google_api_pattern =  r'AIzaSy[0-9a-zA-Z_\\-]{33}'
 	for k in re.findall(google_api_pattern, pagetext):
@@ -173,8 +180,9 @@ def google_api_search(displaymode, page):
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential Key: {k}')
 
-def slack_api_search(displaymode, page):
-	lib.PrintStatus("Scanning for slack API keys...")
+def slack_api_search(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Scanning for slack API keys...")
 	pagetext = page.text
 	slack_api_pattern = r"xoxp-\\d+-\\d+-\\d+-[0-9a-f]+"
 	for k in re.findall(slack_api_pattern, pagetext):
@@ -191,8 +199,9 @@ def slack_api_search(displaymode, page):
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential Key: {k}')
 
-def slack_webhook_search(displaymode, page):
-	lib.PrintStatus("Scanning for slack webhooks...")
+def slack_webhook_search(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Scanning for slack webhooks...")
 	pagetext = page.text
 	slack_webhook_pattern = r"https://hooks.slack.com/services/T[a-zA-Z0-9_]{8}/B[a-zA-Z0-9_]{8}/[a-zA-Z0-9_]{24}"
 	for k in re.findall(slack_webhook_pattern, pagetext):
@@ -209,8 +218,9 @@ def slack_webhook_search(displaymode, page):
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential Hook: {k}')
 
-def slack_bot_search(displaymode, page):
-	lib.PrintStatus("Scanning for slack bot tokens...")
+def slack_bot_search(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Scanning for slack bot tokens...")
 	pagetext = page.text
 	slack_bot_pattern = r"xoxb-\\d+-[0-9a-zA-Z]+"
 	for k in re.findall(slack_bot_pattern, pagetext):
@@ -227,8 +237,9 @@ def slack_bot_search(displaymode, page):
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential Token: {k}')
 
-def nonspecific_api_search(displaymode, page):
-	lib.PrintStatus("Scanning for nonspecific API keys...")
+def nonspecific_api_search(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Scanning for nonspecific API keys...")
 	pagetext = page.text
 	nonspecific_pattern = r"[a|A][p|P][i|I][_]?[k|K][e|E][y|Y].{0,30}['\"\\s][0-9a-zA-Z]{32,45}['\"\\s]"
 	for k in re.findall(nonspecific_pattern, pagetext):
@@ -245,8 +256,9 @@ def nonspecific_api_search(displaymode, page):
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential Key: {k}')
 
-def discord_bot_search(displaymode, page):
-	lib.PrintStatus("Scanning for discord bot tokens...")
+def discord_bot_search(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Scanning for discord bot tokens...")
 	pagetext = page.text
 	discord_token_pattern = r"([\w\-\.]+[\-\.][\w\-\.]+)"
 	for k in re.findall(discord_token_pattern, pagetext):
@@ -263,8 +275,9 @@ def discord_bot_search(displaymode, page):
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential Token: {k}')
 
-def discord_webhook_search(displaymode, page):
-	lib.PrintStatus("Scanning for discord webhooks...")
+def discord_webhook_search(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Scanning for discord webhooks...")
 	pagetext = page.text
 	discord_webhook_pattern = r"(https:\/\/discordapp\.com\/api\/webhooks\/[\d]+\/[\w]+)"
 	for k in re.findall(discord_webhook_pattern, pagetext):
@@ -281,8 +294,9 @@ def discord_webhook_search(displaymode, page):
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential Hook: {k}')
 
-def discord_nitro_search(displaymode, page):
-	lib.PrintStatus("Scanning for discord nitro links...")
+def discord_nitro_search(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Scanning for discord nitro links...")
 	pagetext = page.text
 	discord_nitro_pattern = r"(https:\/\/discord\.gift\/.+[a-z{1,16}])"
 	for k in re.findall(discord_nitro_pattern, pagetext):
@@ -299,8 +313,9 @@ def discord_nitro_search(displaymode, page):
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential link: {k}')
 
-def redis_search(displaymode, page):
-	lib.PrintStatus("Scanning for Redis URLs...")
+def redis_search(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Scanning for Redis secrets...")
 	pagetext = page.text
 	redis_pattern = r'redis://[0-9a-zA-Z:@.\\-]+'
 	redis_artifacts = ['REDIS_PASSWORD', 'REDIS_CACHE_DATABASE', 'REDIS_HOST', 'REDIS_DATABASE']
@@ -335,8 +350,9 @@ def redis_search(displaymode, page):
 			elif displaymode == 'p' or 'b':
 				lib.PrintSuccess(f'Artifact Found: {ra}')
 
-def ssh_keys_search(displaymode, page):
-	lib.PrintStatus("Scanning for SSH Keys...")
+def ssh_keys_search(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Scanning for SSH Keys...")
 	pagetext = page.text
 	ssh_keys_identifiers = ["-----BEGIN OPENSSH PRIVATE KEY-----", "-----BEGIN DSA PRIVATE KEY-----", "-----BEGIN EC PRIVATE KEY-----"]
 	for pattern in set(ssh_keys_identifiers):
@@ -355,8 +371,9 @@ def ssh_keys_search(displaymode, page):
 				lib.PrintSuccess(f'SSH Key: {pattern}')
 			lib.PrintHighSeverity('Warning: High Severity Item Found')
 
-def heroku_search(displaymode, page):
-	lib.PrintStatus("Scanning for Heroku API keys...")
+def heroku_search(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Scanning for Heroku API keys...")
 	pagetext = page.text
 	heroku_pattern = r"[h|H][e|E][r|R][o|O][k|K][u|U].{0,30}[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}"
 	for k in re.findall(heroku_pattern, pagetext):
@@ -373,8 +390,9 @@ def heroku_search(displaymode, page):
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential Key: {k}')
 
-def facebook_OAUTH(displaymode, page):
-	lib.PrintStatus("Scanning for facebook OAUTH secrets...")
+def facebook_OAUTH(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Scanning for facebook OAUTH secrets...")
 	pagetext = page.text
 	fauth_pattern = r"[f|F][a|A][c|C][e|E][b|B][o|O][o|O][k|K].{0,30}['\"\\s][0-9a-f]{32}['\"\\s]"
 	for k in re.findall(fauth_pattern, pagetext):
@@ -393,8 +411,9 @@ def facebook_OAUTH(displaymode, page):
 			lib.PrintSuccess(f'Potential Secret: {k}')
 			lib.PrintHighSeverity('Warning: High Severity Item Found')
 
-def twilio_search(displaymode, page):
-	lib.PrintStatus("Scanning for twilio keys...")
+def twilio_search(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus("Scanning for twilio keys...")
 	pagetext = page.text
 	twilio_pattern = r"SK[a-z0-9]{32}"
 	for k in re.findall(twilio_pattern, pagetext):
@@ -411,8 +430,9 @@ def twilio_search(displaymode, page):
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Potential Key: {k}')
 
-def misc_database_secrets(displaymode, page):
-	lib.PrintStatus('Searching for miscellaneous database secrets...')
+def misc_database_secrets(displaymode, page, repo_crawl, verbosity):
+	if repo_crawl is False or verbosity == 'off':
+		lib.PrintStatus('Searching for miscellaneous database secrets...')
 	pagetext = page.text
 	database_secrets = ['DB_USER', 'DB_PASSWORD', 'SUPERUSER_NAME', 'SUPERUSER_PASSWORD', 'DB_NAME']
 	for ds in set(database_secrets):
@@ -478,75 +498,83 @@ def get_repos(profilelink):
 		repolist.append(repolink)
 	return repolist
 
-def traverse_repos(repolist, directory_filtering, blacklisted_directories, verbosity): # Here Be Recursion
+def traverse_repos(repolist, link_type, directory_filtering, blacklisted_directories, verbosity): # Here Be Recursion
 	fileaddrs = []
 	def spider_current_level(page):
 		dirnames = []
 		levelsoup = BeautifulSoup(page.text, 'html.parser')
-		try:
-			spans = levelsoup.findAll('span', {'class': "css-truncate css-truncate-target"})
-			for s in spans:
-				subtags = s.findAll('a', {'class': "js-navigation-open"}, href=True)
-				for st in subtags:
-					if '/blob/' in st['href']:
-						lnk = st['href'].replace('blob/', '')
-						if verbosity == 'on':
-							lib.PrintStatus(f"file: {lnk}")
-						full = baseraw + lnk
-						fileaddrs.append(full)
-					else:
-						if verbosity == 'on':
-							lib.PrintStatus(f"dir: {st['href']}")
-						if directory_filtering is True:
-							slashcount = 0
-							for character in st['href']:
-								if character == '/':
-									slashcount += 1
-							directory_name = st['href'].split('/')[slashcount]
-							if directory_name not in set(blacklisted_directories):
-								dirnames.append(st['href'])
-						else:
+		spans = levelsoup.findAll('span', {'class': "css-truncate css-truncate-target"})
+		for s in spans:
+			subtags = s.findAll('a', {'class': "js-navigation-open"}, href=True)
+			for st in subtags:
+				if '/blob/' in st['href']:
+					lnk = st['href'].replace('blob/', '')
+					if verbosity == 'on':
+						lib.PrintStatus(f"file: {lnk}")
+					full = baseraw + lnk
+					fileaddrs.append(full)
+				else:
+					if verbosity == 'on':
+						lib.PrintStatus(f"dir: {st['href']}")
+					if directory_filtering is True:
+						slashcount = 0
+						for character in st['href']:
+							if character == '/':
+								slashcount += 1
+						directory_name = st['href'].split('/')[slashcount]
+						if directory_name not in set(blacklisted_directories):
 							dirnames.append(st['href'])
-			if len(dirnames) == 0:
-				if verbosity == 'on':
-					lib.PrintStatus("Branch exhausted")
+					else:
+						dirnames.append(st['href'])
+		if len(dirnames) == 0:
+			if verbosity == 'on':
+				lib.PrintStatus("Branch exhausted")
+		else:
+			for subdir in dirnames:
+				subdir_addr = baselink + subdir
+				subdir_page = connect(subdir_addr)
+				spider_current_level(subdir_page)
+	if link_type == 'profile':
+		for i in repolist:
+			repopage = connect(i)
+			if repopage == 'connection_failed':
+				lib.PrintError(f'Connection to {i} failed.')
 			else:
-				for subdir in dirnames:
-					subdir_addr = baselink + subdir
-					subdir_page = connect(subdir_addr)
-					spider_current_level(subdir_page)
-		except AttributeError:
-			# TODO: find and fix
-			lib.PrintFailure("Unusual file behavior detected, ending spidering with current resources...")
-	for i in repolist:
-		repopage = connect(i)
-		spider_current_level(repopage)
+				spider_current_level(repopage)
+	elif link_type == 'repo':
+		repopage = connect(repolist)
+		if repopage == 'connection_failed':
+			lib.PrintError(f'Connection to {repolist} failed.')
+		else:
+			spider_current_level(repopage)
 	return fileaddrs
 
-def search_execute(displaymode, page):
-	shodan_search(displaymode, page)
-	github_search(displaymode, page)
-	AWS_search(displaymode, page)
-	google_access_token_search(displaymode, page)
-	google_oauth_search(displaymode, page)
-	google_access_token_search(displaymode, page)
-	google_api_search(displaymode, page)
-	slack_bot_search(displaymode, page)
-	slack_api_search(displaymode, page)
-	slack_webhook_search(displaymode, page)
-	nonspecific_api_search(displaymode, page)
-	discord_bot_search(displaymode, page)
-	discord_webhook_search(displaymode, page)
-	discord_nitro_search(displaymode, page)
-	redis_search(displaymode, page)
-	ssh_keys_search(displaymode, page)
-	heroku_search(displaymode, page)
-	facebook_OAUTH(displaymode, page)
-	twilio_search(displaymode, page)
+def search_execute(displaymode, page, repo_crawl, verbosity):
+	shodan_search(displaymode, page, repo_crawl, verbosity)
+	github_search(displaymode, page, repo_crawl, verbosity)
+	AWS_search(displaymode, page, repo_crawl, verbosity)
+	google_access_token_search(displaymode, page, repo_crawl, verbosity)
+	google_oauth_search(displaymode, page, repo_crawl, verbosity)
+	google_access_token_search(displaymode, page, repo_crawl, verbosity)
+	google_api_search(displaymode, page, repo_crawl, verbosity)
+	slack_bot_search(displaymode, page, repo_crawl, verbosity)
+	slack_api_search(displaymode, page, repo_crawl, verbosity)
+	slack_webhook_search(displaymode, page, repo_crawl, verbosity)
+	nonspecific_api_search(displaymode, page, repo_crawl, verbosity)
+	discord_bot_search(displaymode, page, repo_crawl, verbosity)
+	discord_webhook_search(displaymode, page, repo_crawl, verbosity)
+	discord_nitro_search(displaymode, page, repo_crawl, verbosity)
+	redis_search(displaymode, page, repo_crawl, verbosity)
+	ssh_keys_search(displaymode, page, repo_crawl, verbosity)
+	heroku_search(displaymode, page, repo_crawl, verbosity)
+	facebook_OAUTH(displaymode, page, repo_crawl, verbosity)
+	twilio_search(displaymode, page, repo_crawl, verbosity)
 
-def scrape(scrape_input_method, displaymode, limiter, repo_crawl, directory_filtering, blacklisted_directories, verbosity):
+def scrape(scrape_input_method, displaymode, limiter, repo_crawl, link_type, directory_filtering, blacklisted_directories, verbosity):
 	if scrape_input_method.lower() == 'm':
 		url = input("Enter the URL: ")
+		if url[len(url)-1] == ' ':
+			url = url[:len(url)-1]
 		urlpage = connect(url)
 		if urlpage == 'connection failed':
 			lib.PrintError("Connection to specified URL could not be established.")
@@ -554,14 +582,22 @@ def scrape(scrape_input_method, displaymode, limiter, repo_crawl, directory_filt
 		else:
 			lib.PrintStatus('Status: [200], Searching for API Keys...')
 			if repo_crawl is False:
-				search_execute(displaymode, urlpage)
+				search_execute(displaymode, urlpage, repo_crawl, verbosity)
 			else:
-				repository_list = get_repos(url)
-				file_addresses = traverse_repos(repository_list, directory_filtering, blacklisted_directories, verbosity)
-				executor = ThreadPoolExecutor(max_workers=len(file_addresses))
+				if link_type == 'profile':
+					resources = get_repos(url)
+					file_addresses = traverse_repos(resources, link_type, directory_filtering, blacklisted_directories, verbosity)
+				elif link_type == 'repo':
+					file_addresses = traverse_repos(url, link_type, directory_filtering, blacklisted_directories, verbosity)
+				if len(file_addresses) > 0:
+					executor = ThreadPoolExecutor(max_workers=len(file_addresses))
+				else:
+					lib.PrintError("Fatal Error: No File Addresses Were Returned")
+					lib.PrintError("This is likely a mistyped URL address or an empty repository.")
+					exit()
 				for addr in set(file_addresses):
 					urlpage = connect(addr)
-					executor.submit(search_execute(displaymode,urlpage))
+					executor.submit(search_execute(displaymode,urlpage,repo_crawl,verbosity))
 					sleep(limiter)
 			lib.PrintSuccess("Scanning complete.")
 	else:
@@ -583,16 +619,20 @@ def scrape(scrape_input_method, displaymode, limiter, repo_crawl, directory_filt
 					if urlpage == 'connection failed':
 						lib.PrintFailure(f"[Line: {count}] Connection failed on host {line}")
 					else:
-						search_execute(displaymode, urlpage)
+						search_execute(displaymode, urlpage,repo_crawl,verbosity)
 						sleep(limiter)
 				else:
-					repository_list = get_repos(line)
-					file_addresses = traverse_repos(repository_list, directory_filtering, blacklisted_directories, verbosity)
+					if link_type == 'profile':
+						resources = get_repos(line)
+					elif link_type == 'repo':
+						resources = line
+					file_addresses = traverse_repos(resources, link_type, directory_filtering, blacklisted_directories, verbosity)
 					executor = ThreadPoolExecutor(max_workers=len(file_addresses))
 					for addr in set(file_addresses):
 						urlpage = connect(addr)
-						executor.submit(search_execute(displaymode, urlpage))
+						executor.submit(search_execute(displaymode, urlpage,repo_crawl,verbosity))
 						sleep(limiter)
+
 
 def load_config():
 	while True:
@@ -628,6 +668,7 @@ displaymode = b
 scrape_input_method = m
 limiter = 5
 repo_crawl = False
+link_type = regular
 directory_filtering = False
 blacklisted_directories = []
 verbosity = off''')
@@ -658,6 +699,7 @@ verbosity = off''')
 		repo_crawl = True
 	else:
 		repo_crawl = False
+	link_type = parser.get('scraping_vars', 'link_type')
 	directory_filtering = parser.get('scraping_vars', 'directory_filtering')
 	if directory_filtering == str('True'):
 		directory_filtering = True
@@ -665,7 +707,7 @@ verbosity = off''')
 		directory_filtering = False
 	blacklisted_directories = parser.get('scraping_vars', 'blacklisted_directories')
 	verbosity = parser.get('scraping_vars', 'verbosity')
-	return displaymode, scrape_input_method, limiter, repo_crawl, directory_filtering, blacklisted_directories, verbosity
+	return displaymode, scrape_input_method, limiter, repo_crawl, link_type, directory_filtering, blacklisted_directories, verbosity
 
 def manual_setup():
 	while True:
@@ -689,9 +731,12 @@ def manual_setup():
 		except ValueError:
 			lib.PrintError("Invalid Input. Enter a positive integer.")
 			continue
+	lib.PrintStatus('\n')
 	lib.PrintStatus("If provided links to one (or multiple) github profiles, Keyring can crawl all repositories for secrets.")
-	lib.PrintStatus("However, this means Keyring WILL NOT FUNCTION CORRECTLY if provided links to other pages in the same text file.")
-	lib.PrintStatus("Large profiles will also take a fairly long time, as Keyring fetches ALL files from ALL repos.\n")
+	lib.PrintStatus("If provided links to github repositories, Keyring can crawl all files in that repository.")
+	lib.PrintStatus("However, this means Keyring WILL NOT FUNCTION CORRECTLY if provided links to other pages in the same text file, or if profile and repo links are mixed.")
+	lib.PrintStatus("Large profiles will also take a fairly long time, as Keyring fetches ALL files from ALL repos.")
+	lib.PrintStatus('\n')
 	while True:
 		repocrawlchoice = input("Enable repo crawling? [y]/[n]: ")
 		if repocrawlchoice.lower() not in ['y', 'n']:
@@ -706,6 +751,17 @@ def manual_setup():
 					lib.PrintError("Invalid Input.")
 					continue
 				else:
+					break
+			while True:
+				link_type_input = input("Github [p]rofile links or Github [r]epository links?: ")
+				if link_type_input.lower() not in ['p', 'r']:
+					lib.PrintError("Invalid Input")
+					continue
+				elif link_type_input.lower() == 'p':
+					link_type = 'profile'
+					break
+				elif link_type_input.lower() == 'r':
+					link_type = 'repo'
 					break
 			while True:
 				lib.PrintStatus("Repositories may contain large directories with no value in crawling, such as dependency folders.")
@@ -727,6 +783,7 @@ def manual_setup():
 			break
 		elif repocrawlchoice.lower() == 'n':
 			repo_crawl = False
+			link_type = 'regular'
 			directory_filtering = False
 			blacklisted_directories = []
 			verbosity = 'off'
@@ -753,19 +810,20 @@ displaymode = {displaymode}
 scrape_input_method = {scrape_input_method}
 limiter = {limiter}
 repo_crawl = {repo_crawl}
+link_type = {link_type}
 directory_filtering = {directory_filtering}
 blacklisted_directories = {blacklisted_directories}
 verbosity = {verbosity}
 ''')
 				break
-	return displaymode, scrape_input_method, limiter, repo_crawl, directory_filtering, blacklisted_directories, verbosity
+	return displaymode, scrape_input_method, limiter, repo_crawl, link_type, directory_filtering, blacklisted_directories, verbosity
 
 def main():
 	try:
 		while True:
 			initchoice = input("[L]oad config file or [m]anually enter?: ")
 			if initchoice.lower() == 'l':
-				displaymode, scrape_input_method, limiter, repo_crawl, directory_filtering, blacklisted_directories, verbosity = load_config()
+				displaymode, scrape_input_method, limiter, repo_crawl, link_type, directory_filtering, blacklisted_directories, verbosity = load_config()
 				if scrape_input_method == 'f':
 					while True:
 						addressfile = input("Enter the full path to the address file: ")
@@ -776,14 +834,14 @@ def main():
 							continue
 				break
 			elif initchoice.lower() == 'm':
-				displaymode, scrape_input_method, limiter, repo_crawl, directory_filtering, blacklisted_directories, verbosity = manual_setup()
+				displaymode, scrape_input_method, limiter, repo_crawl, link_type, directory_filtering, blacklisted_directories, verbosity = manual_setup()
 				break
 			elif initchoice == "":
 				lib.DoNothing()
 			else:
 				lib.PrintError("Invalid Input.")
 				continue
-		scrape(scrape_input_method, displaymode, limiter, repo_crawl, directory_filtering, blacklisted_directories, verbosity)
+		scrape(scrape_input_method, displaymode, limiter, repo_crawl, link_type, directory_filtering, blacklisted_directories, verbosity)
 	except KeyboardInterrupt:
 		print()
 		lib.PrintError("Search canceled.")
