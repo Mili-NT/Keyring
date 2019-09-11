@@ -24,7 +24,7 @@ baseraw = 'https://raw.githubusercontent.com/'
 def shodan_search(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Searching for Shodan keys...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Searching for Shodan keys...")
 	shodan_pattern = r'\b[a-zA-Z0-9]{32}\b'
 	pagetext = page.text
@@ -34,7 +34,7 @@ def shodan_search(displaymode, page, repo_crawl, verbosity):
 	if not keyset:
 		if repo_crawl is False:
 			lib.PrintFailure("No valid shodan keys found in set.")
-		elif repo_crawl is True and verbosity == 'on':
+		elif repo_crawl is True and verbosity == 'y':
 			lib.PrintFailure("No valid shodan keys found in set.")
 	else:
 		valid_paid_keys = {}
@@ -70,7 +70,7 @@ def shodan_search(displaymode, page, repo_crawl, verbosity):
 def github_search(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Searching for Github keys...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Searching for Github keys...")
 	github_api = r"[g|G][i|I][t|T][h|H][u|U][b|B].{0,30}['\"\\s][0-9a-zA-Z]{35,40}['\"\\s]"
 	pagetext = page.text
@@ -91,7 +91,7 @@ def github_search(displaymode, page, repo_crawl, verbosity):
 def AWS_search(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Searching for AWS Access Keys...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Searching for AWS Access Keys...")
 	aws_pattern = r"AKIA[0-9A-Z]{16}"
 	pagetext = page.text
@@ -114,7 +114,7 @@ def AWS_search(displaymode, page, repo_crawl, verbosity):
 def google_access_token_search(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Scanning for google access tokens...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Scanning for google access tokens...")
 	pagetext = page.text
 	gat_pattern = r'ya29.[0-9a-zA-Z_\\-]{68}'
@@ -137,7 +137,7 @@ def google_access_token_search(displaymode, page, repo_crawl, verbosity):
 def google_oauth_search(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Scanning for google OAUTH secrets...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Scanning for google OAUTH secrets...")
 	pagetext = page.text
 	gauth_pattern = r"(\"client_secret\":\"[a-zA-Z0-9-_]{24}\")"
@@ -160,7 +160,7 @@ def google_oauth_search(displaymode, page, repo_crawl, verbosity):
 def google_api_search(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Scanning for google API keys...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Scanning for google API keys...")
 	pagetext = page.text
 	google_api_pattern =  r'AIzaSy[0-9a-zA-Z_\\-]{33}'
@@ -181,7 +181,7 @@ def google_api_search(displaymode, page, repo_crawl, verbosity):
 def slack_api_search(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Scanning for slack API keys...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Scanning for slack API keys...")
 	pagetext = page.text
 	slack_api_pattern = r"xoxp-\\d+-\\d+-\\d+-[0-9a-f]+"
@@ -202,7 +202,7 @@ def slack_api_search(displaymode, page, repo_crawl, verbosity):
 def slack_webhook_search(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Scanning for slack webhooks...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Scanning for slack webhooks...")
 	pagetext = page.text
 	slack_webhook_pattern = r"https://hooks.slack.com/services/T[a-zA-Z0-9_]{8}/B[a-zA-Z0-9_]{8}/[a-zA-Z0-9_]{24}"
@@ -223,7 +223,7 @@ def slack_webhook_search(displaymode, page, repo_crawl, verbosity):
 def slack_bot_search(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Scanning for slack bot tokens...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Scanning for slack bot tokens...")
 	pagetext = page.text
 	slack_bot_pattern = r"xoxb-\\d+-[0-9a-zA-Z]+"
@@ -244,7 +244,7 @@ def slack_bot_search(displaymode, page, repo_crawl, verbosity):
 def nonspecific_api_search(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Scanning for nonspecific API keys...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Scanning for nonspecific API keys...")
 	pagetext = page.text
 	nonspecific_pattern = r"[a|A][p|P][i|I][_]?[k|K][e|E][y|Y].{0,30}['\"\\s][0-9a-zA-Z]{32,45}['\"\\s]"
@@ -265,7 +265,7 @@ def nonspecific_api_search(displaymode, page, repo_crawl, verbosity):
 def discord_bot_search(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Scanning for discord bot tokens...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Scanning for discord bot tokens...")
 	pagetext = page.text
 	discord_token_pattern = r"([\w\-\.]+[\-\.][\w\-\.]+)"
@@ -286,7 +286,7 @@ def discord_bot_search(displaymode, page, repo_crawl, verbosity):
 def discord_webhook_search(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Scanning for discord webhooks...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Scanning for discord webhooks...")
 	pagetext = page.text
 	discord_webhook_pattern = r"(https:\/\/discordapp\.com\/api\/webhooks\/[\d]+\/[\w]+)"
@@ -307,7 +307,7 @@ def discord_webhook_search(displaymode, page, repo_crawl, verbosity):
 def discord_nitro_search(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Scanning for discord nitro links...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Scanning for discord nitro links...")
 	pagetext = page.text
 	discord_nitro_pattern = r"(https:\/\/discord\.gift\/.+[a-z{1,16}])"
@@ -328,7 +328,7 @@ def discord_nitro_search(displaymode, page, repo_crawl, verbosity):
 def redis_search(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Scanning for Redis secrets...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Scanning for Redis secrets...")
 	pagetext = page.text
 	redis_pattern = r'redis://[0-9a-zA-Z:@.\\-]+'
@@ -367,7 +367,7 @@ def redis_search(displaymode, page, repo_crawl, verbosity):
 def ssh_keys_search(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Scanning for SSH Keys...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Scanning for SSH Keys...")
 	pagetext = page.text
 	ssh_keys_identifiers = ["-----BEGIN OPENSSH PRIVATE KEY-----", "-----BEGIN DSA PRIVATE KEY-----", "-----BEGIN EC PRIVATE KEY-----"]
@@ -390,7 +390,7 @@ def ssh_keys_search(displaymode, page, repo_crawl, verbosity):
 def heroku_search(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Scanning for Heroku API keys...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Scanning for Heroku API keys...")
 	pagetext = page.text
 	heroku_pattern = r"[h|H][e|E][r|R][o|O][k|K][u|U].{0,30}[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}"
@@ -411,7 +411,7 @@ def heroku_search(displaymode, page, repo_crawl, verbosity):
 def facebook_OAUTH(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Scanning for facebook OAUTH secrets...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Scanning for facebook OAUTH secrets...")
 	pagetext = page.text
 	fauth_pattern = r"[f|F][a|A][c|C][e|E][b|B][o|O][o|O][k|K].{0,30}['\"\\s][0-9a-f]{32}['\"\\s]"
@@ -434,7 +434,7 @@ def facebook_OAUTH(displaymode, page, repo_crawl, verbosity):
 def twilio_search(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Scanning for twilio keys...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Scanning for twilio keys...")
 	pagetext = page.text
 	twilio_pattern = r"SK[a-z0-9]{32}"
@@ -455,7 +455,7 @@ def twilio_search(displaymode, page, repo_crawl, verbosity):
 def misc_database_secrets(displaymode, page, repo_crawl, verbosity):
 	if repo_crawl is False:
 		lib.PrintStatus("Searching for miscellaneous database secrets...")
-	elif repo_crawl is True and verbosity == 'on':
+	elif repo_crawl is True and verbosity == 'y':
 		lib.PrintStatus("Searching for miscellaneous database secrets...")
 	pagetext = page.text
 	database_secrets = ['DB_USER', 'DB_PASSWORD', 'SUPERUSER_NAME', 'SUPERUSER_PASSWORD', 'DB_NAME']
@@ -530,12 +530,12 @@ def traverse_repos(repolist, link_type, directory_filtering, blacklisted_directo
 			for st in subtags:
 				if '/blob/' in st['href']:
 					lnk = st['href'].replace('blob/', '')
-					if verbosity == 'on':
+					if verbosity == 'y':
 						lib.PrintStatus(f"File: {lnk}")
 					full = baseraw + lnk
 					fileaddrs.append(full)
 				else:
-					if verbosity == 'on':
+					if verbosity == 'y':
 						lib.PrintStatus(f"Directory: {st['href']}")
 					if directory_filtering is True:
 						slashcount = 0
@@ -548,7 +548,7 @@ def traverse_repos(repolist, link_type, directory_filtering, blacklisted_directo
 					else:
 						dirnames.append(st['href'])
 		if len(dirnames) == 0:
-			if verbosity == 'on':
+			if verbosity == 'y':
 				lib.PrintStatus("Branch exhausted")
 		else:
 			for subdir in dirnames:
@@ -768,11 +768,11 @@ def manual_setup():
 			repo_crawl = True
 			while True:
 				lib.PrintHighSeverity("Warning: Turning on verbosity will output a LOT when spidering large profiles.")
-				verbosity = input("Select verbosity for spidering: [off]/[on]: ")
+				verbosity = input("Enable verbosity for spidering: [y]/[n]: ")
 				if verbosity == "":
 					lib.DoNothing()
 					continue
-				elif verbosity.lower() == 'on' or 'off':
+				elif verbosity.lower() == 'y' or 'n':
 					break
 				else:
 					lib.PrintError("Invalid Input.")
