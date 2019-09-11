@@ -32,5 +32,5 @@ Keyring is a tool to search a given URL for API Keys and other secrets.
 
 ### TODO:
 - Add more keys (please send me either a sample key or regex for anything you want added)
+- Have input methods not respond with Invalid input when nothing is entered (if nothing is entered, ask the question again.)
 - Bug fixes
-
