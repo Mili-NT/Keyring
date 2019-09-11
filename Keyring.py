@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# By Mili
 import re
 import lib
 import errno
@@ -6,34 +7,15 @@ import codecs
 import shodan
 import requests
 from time import sleep
-from random import choice
 from bs4 import BeautifulSoup
 from configparser import ConfigParser
 from os import getcwd, listdir, makedirs, mkdir
 from concurrent.futures import ThreadPoolExecutor
 from os.path import isfile, join, isdir, exists, dirname
 
-# By Mili
-# Python 3.6.0
-
-
 # Global Variables
 parser = ConfigParser()
 curdir = getcwd()
-
-user_agents = [
-	'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
-	'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
-	'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
-	'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/602.2.14 (KHTML, like Gecko) Version/10.0.1 Safari/602.2.14',
-	'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36',
-	'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36',
-	'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36',
-	'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36',
-	'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
-	'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0'
-]
-
 baselink = 'https://github.com/'
 baseraw = 'https://raw.githubusercontent.com/'
 
@@ -492,9 +474,6 @@ def misc_database_secrets(displaymode, page, repo_crawl, verbosity):
 			elif displaymode == 'p' or 'b':
 				print(f"Database secret: {ds}")
 
-def random_headers():
-	return { 'User-Agent': choice(user_agents), 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' }
-
 def connect(url):
 	# TODO: Add Color
 	def PrintConnectError():
@@ -514,7 +493,7 @@ Possible fixes: Check firewall settings and check the status of {url}.
 Exception occurred: {e}
 		""")
 	try:
-		page = requests.get(url, headers=random_headers())
+		page = requests.get(url, headers=lib.random_headers())
 		return page
 	except Exception as e:
 		if e is requests.exceptions.ConnectionError:
@@ -639,7 +618,7 @@ def scrape(scrape_input_method, displaymode, limiter, repo_crawl, link_type, dir
 					exit()
 				for addr in set(file_addresses):
 					urlpage = connect(addr)
-					executor.submit(search_execute(displaymode,urlpage,repo_crawl,verbosity))
+					executor.submit(search_execute(displaymode, urlpage, repo_crawl, verbosity))
 					sleep(limiter)
 			lib.PrintSuccess("Scanning complete.")
 	else:
@@ -661,7 +640,7 @@ def scrape(scrape_input_method, displaymode, limiter, repo_crawl, link_type, dir
 					if urlpage == 'connection failed':
 						lib.PrintFailure(f"[Line: {count}] Connection failed on host {line}")
 					else:
-						search_execute(displaymode, urlpage,repo_crawl,verbosity)
+						search_execute(displaymode, urlpage, repo_crawl, verbosity)
 						sleep(limiter)
 				else:
 					if link_type == 'profile':
@@ -672,9 +651,8 @@ def scrape(scrape_input_method, displaymode, limiter, repo_crawl, link_type, dir
 					executor = ThreadPoolExecutor(max_workers=len(file_addresses))
 					for addr in set(file_addresses):
 						urlpage = connect(addr)
-						executor.submit(search_execute(displaymode, urlpage,repo_crawl,verbosity))
+						executor.submit(search_execute(displaymode, urlpage, repo_crawl, verbosity))
 						sleep(limiter)
-
 
 def load_config():
 	while True:
@@ -885,6 +863,3 @@ def main():
 	except KeyboardInterrupt:
 		print()
 		lib.PrintError("Search canceled.")
-
-if __name__ == '__main__':
-	main()
