@@ -702,6 +702,9 @@ verbosity = off''')
 			if load_choice > count:
 				raise ValueError
 			break
+			elif load_choice == "":
+				lib.DoNothing()
+				continue
 		except ValueError:
 			lib.PrintFailure("Invalid Input. Please enter the integer that corresponds with the desired config file.")
 			continue
@@ -732,20 +735,31 @@ verbosity = off''')
 def manual_setup():
 	while True:
 		displaymode = input("[p]rint to screen, [s]ave to file, or [b]oth: ")
-		if displaymode.lower() not in ['p', 's', 'b']:
-			lib.PrintError("Invalid Input")
+		if displaymode == "":
+			lib.DoNothing()
 			continue
-		break
+		elif displaymode.lower() == 'p' or 's' or 'b':
+			break
+		else:
+			lib.PrintError("Invalid Input.")
+			continue
 	while True:
 		scrape_input_method = input("[m]anual input (single url) or load from [f]ile: ")
-		if scrape_input_method.lower() not in ['m', 'f']:
-			lib.PrintError("Invalid Input")
+		if scrape_input_method.lower() == 'm' or 'f':
+			break
+		elif scrape_input_method == "":
+			lib.DoNothing()
 			continue
-		break
+		else:
+			lib.PrintError("Invalid Input.")
+			continue
 	while True:
 		try:
 			limiter = int(input("Enter the time between requests, in seconds: "))
 			if limiter < 0:
+				continue
+			elif limiter == "":
+				lib.DoNothing()
 				continue
 			break
 		except ValueError:
@@ -757,23 +771,26 @@ def manual_setup():
 	lib.PrintStatus("Large profiles will also take a fairly long time, as Keyring fetches ALL files from ALL repos.")
 	while True:
 		repocrawlchoice = input("Enable repo crawling? [y]/[n]: ")
-		if repocrawlchoice.lower() not in ['y', 'n']:
-			lib.PrintError("Invalid Input.")
+		if repocrawlchoice == "":
+			lib.DoNothing()
 			continue
 		elif repocrawlchoice.lower() == 'y':
 			repo_crawl = True
 			while True:
 				lib.PrintHighSeverity("Warning: Turning on verbosity will output a LOT when spidering large profiles.")
 				verbosity = input("Select verbosity for spidering: [off]/[on]: ")
-				if verbosity.lower() not in ['off', 'on']:
+				if verbosity == "":
+					lib.DoNothing()
+					continue
+				elif verbosity.lower() == 'on' or 'off':
+					break
+				else:
 					lib.PrintError("Invalid Input.")
 					continue
-				else:
-					break
 			while True:
 				link_type_input = input("Github [p]rofile links or Github [r]epository links?: ")
-				if link_type_input.lower() not in ['p', 'r']:
-					lib.PrintError("Invalid Input")
+				if link_type_input == "":
+					lib.DoNothing()
 					continue
 				elif link_type_input.lower() == 'p':
 					link_type = 'profile'
@@ -781,13 +798,13 @@ def manual_setup():
 				elif link_type_input.lower() == 'r':
 					link_type = 'repo'
 					break
+				else:
+					lib.PrintError("Invalid Input.")
+					continue
 			while True:
 				lib.PrintStatus("Repositories may contain large directories with no value in crawling, such as dependency folders.")
 				directory_filtering_status = input("Enable directory filtering: [y]/[n]: ")
-				if directory_filtering_status.lower() not in ['y','n']:
-					lib.PrintError("Invalid Input.")
-					continue
-				elif directory_filtering_status.lower() == 'y':
+				if directory_filtering_status.lower() == 'y':
 					directory_filtering = True
 					blacklisted_directories = []
 					blacklisted_directory_input = input("Enter the directory names you wish to filter (separated by a single comma): ").split(',')
@@ -798,6 +815,12 @@ def manual_setup():
 					directory_filtering = False
 					blacklisted_directories = [] #placeholder for configparser
 					break
+				elif directory_filtering_status == "":
+					lib.DoNothing()
+					continue
+				else:
+					lib.PrintError("Invalid Input.")
+					continue
 			break
 		elif repocrawlchoice.lower() == 'n':
 			repo_crawl = False
@@ -806,6 +829,9 @@ def manual_setup():
 			blacklisted_directories = []
 			verbosity = 'off'
 			break
+		else:
+			lib.PrintError("Invalid Input.")
+			continue
 	while True:
 		savechoice = input("Save choices as config file? [y]/[n]: ")
 		if savechoice.lower() == 'n':
@@ -833,7 +859,10 @@ directory_filtering = {directory_filtering}
 blacklisted_directories = {blacklisted_directories}
 verbosity = {verbosity}
 ''')
-				break
+		else:
+			lib.PrintError("Invalid Input.")
+			continue
+		break
 	return displaymode, scrape_input_method, limiter, repo_crawl, link_type, directory_filtering, blacklisted_directories, verbosity
 
 def main():
