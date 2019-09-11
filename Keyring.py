@@ -6,16 +6,17 @@ import errno
 import codecs
 import shodan
 import requests
+from sys import path
 from time import sleep
 from bs4 import BeautifulSoup
 from configparser import ConfigParser
-from os import getcwd, listdir, makedirs, mkdir
+from os import listdir, makedirs, mkdir
 from concurrent.futures import ThreadPoolExecutor
 from os.path import isfile, join, isdir, exists, dirname
 
 # Global Variables
 parser = ConfigParser()
-curdir = getcwd()
+curdir = path[0]
 baselink = 'https://github.com/'
 baseraw = 'https://raw.githubusercontent.com/'
 
@@ -655,22 +656,10 @@ def scrape(scrape_input_method, displaymode, limiter, repo_crawl, link_type, dir
 						sleep(limiter)
 
 def load_config():
-	while True:
-		if isdir(f'{curdir}/KRconfig') is False:
-			lib.PrintError(f"Config directory not detected in {curdir}...")
-			lib.PrintError(f"Please move KRconfig directory into {curdir}")
-			cont = input('Continue? [y/n]: ')
-			if cont.lower() == 'y':
-				continue
-			elif cont.lower() == 'n':
-				exit()
-			elif cont == "":
-				lib.DoNothing()
-			else:
-				lib.PrintFailure("Invalid Input")
-				continue
-		else:
-			break
+	if isdir(f'{curdir}/KRconfig') is False:
+		lib.PrintError(f"Config directory not detected in {curdir}...")
+		lib.PrintStatus(f"Making config directory in {curdir}...")
+		mkdir(f'{curdir}/KRconfig')
 	config_files = {}
 	count = 0
 	onlyfiles = [f for f in listdir(f'{curdir}/KRconfig') if isfile(join(f'{curdir}/KRconfig', f))]
@@ -701,10 +690,11 @@ verbosity = off''')
 			load_choice = int(input("Select which config file to load: "))
 			if load_choice > count:
 				raise ValueError
-			break
 			elif load_choice == "":
 				lib.DoNothing()
 				continue
+			else:
+				break
 		except ValueError:
 			lib.PrintFailure("Invalid Input. Please enter the integer that corresponds with the desired config file.")
 			continue
