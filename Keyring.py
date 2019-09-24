@@ -460,7 +460,7 @@ def misc_database_secrets(displaymode, page, repo_crawl, verbosity):
 	pagetext = page.text
 	database_file_pattern = r'.*\.(sql|db|gdb|dbf|myd|sl3|nppe|mongo|rdb|sqlite3)$'
 	for k in re.findall(database_file_pattern, pagetext):
-		lib.PrintHighSeverity('Warning: High Severity Item Found'
+		lib.PrintHighSeverity('Warning: High Severity Item Found')
 		if displaymode == 's' or 'b':
 			db_output = f'{curdir}/Output/DatabaseSecrets.txt'
 			if not exists(dirname(db_output)):
