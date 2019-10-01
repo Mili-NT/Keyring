@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # By Mili
+# TODO: More accurate shodan regex (will speed up execution)
 import re
 import lib
 import errno
