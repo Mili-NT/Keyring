@@ -723,17 +723,9 @@ verbosity = off''')
 	# Scraping Variables
 	scrape_input_method = parser.get('scraping_vars', 'scrape_input_method')
 	limiter = int(parser.get('scraping_vars', 'limiter'))
-	repo_crawl = parser.get('scraping_vars', 'repo_crawl')
-	if repo_crawl == str('True'):
-		repo_crawl = True
-	else:
-		repo_crawl = False
+	repo_crawl = parser.getboolean('scraping_vars', 'repo_crawl')
 	link_type = parser.get('scraping_vars', 'link_type')
-	directory_filtering = parser.get('scraping_vars', 'directory_filtering')
-	if directory_filtering == str('True'):
-		directory_filtering = True
-	else:
-		directory_filtering = False
+	directory_filtering = parser.getboolean('scraping_vars', 'directory_filtering')
 	blacklisted_directories = parser.get('scraping_vars', 'blacklisted_directories')
 	verbosity = parser.get('scraping_vars', 'verbosity')
 	return displaymode, scrape_input_method, limiter, repo_crawl, link_type, directory_filtering, blacklisted_directories, verbosity
