@@ -644,7 +644,7 @@ def scrape(scrape_input_method, displaymode, limiter, repo_crawl, link_type, dir
 			if isfile(url_file) is True:
 				break
 			elif str(url_file) == "":
-				lib.DoNothing()
+				pass
 			else:
 				lib.PrintError("No Such File Found.")
 				continue
@@ -707,7 +707,7 @@ verbosity = off''')
 			if load_choice > count:
 				raise ValueError
 			elif load_choice == "":
-				lib.DoNothing()
+				pass
 				continue
 			else:
 				break
@@ -734,7 +734,7 @@ def manual_setup():
 	while True:
 		displaymode = input("[p]rint to screen, [s]ave to file, or [b]oth: ")
 		if displaymode == "":
-			lib.DoNothing()
+			pass
 			continue
 		elif displaymode.lower() == 'p' or 's' or 'b':
 			break
@@ -746,7 +746,7 @@ def manual_setup():
 		if scrape_input_method.lower() == 'm' or 'f':
 			break
 		elif scrape_input_method == "":
-			lib.DoNothing()
+			pass
 			continue
 		else:
 			lib.PrintError("Invalid Input.")
@@ -757,7 +757,7 @@ def manual_setup():
 			if limiter < 0:
 				continue
 			elif limiter == "":
-				lib.DoNothing()
+				pass
 				continue
 			break
 		except ValueError:
@@ -770,7 +770,7 @@ def manual_setup():
 	while True:
 		repocrawlchoice = input("Enable repo crawling? [y]/[n]: ")
 		if repocrawlchoice == "":
-			lib.DoNothing()
+			pass
 			continue
 		elif repocrawlchoice.lower() == 'y':
 			repo_crawl = True
@@ -778,7 +778,7 @@ def manual_setup():
 				lib.PrintHighSeverity("Warning: Turning on verbosity will output a LOT when spidering large profiles.")
 				verbosity = input("Enable verbosity for spidering: [y]/[n]: ")
 				if verbosity == "":
-					lib.DoNothing()
+					pass
 					continue
 				elif verbosity.lower() == 'y' or 'n':
 					break
@@ -788,7 +788,7 @@ def manual_setup():
 			while True:
 				link_type_input = input("Github [p]rofile links or Github [r]epository links?: ")
 				if link_type_input == "":
-					lib.DoNothing()
+					pass
 					continue
 				elif link_type_input.lower() == 'p':
 					link_type = 'profile'
@@ -814,7 +814,7 @@ def manual_setup():
 					blacklisted_directories = [] #placeholder for configparser
 					break
 				elif directory_filtering_status == "":
-					lib.DoNothing()
+					pass
 					continue
 				else:
 					lib.PrintError("Invalid Input.")
@@ -882,11 +882,11 @@ def main():
 				displaymode, scrape_input_method, limiter, repo_crawl, link_type, directory_filtering, blacklisted_directories, verbosity = manual_setup()
 				break
 			elif initchoice == "":
-				lib.DoNothing()
+				pass
 			else:
 				lib.PrintError("Invalid Input.")
 				continue
 		scrape(scrape_input_method, displaymode, limiter, repo_crawl, link_type, directory_filtering, blacklisted_directories, verbosity)
 	except KeyboardInterrupt:
-		print()
+		# print() # are you doing something with this?
 		lib.PrintError("Search canceled.")
