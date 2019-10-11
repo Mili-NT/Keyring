@@ -1,10 +1,10 @@
 # Project Overview
 https://github.com/Mili-NT/Keyring
 ## Project Details:
-Name: **Keyring**
-Category: **Security**
-Creator: **Mili**
-Maintainers: **KuteKetX**
+- Name: **Keyring**
+- Category: **Security**
+- Creator: **Mili**
+- Maintainers: **KuteKetX**
 ## Project Purpose:
 Keyring is a tool designed to prevent information leaks in published code.
 It uses regular expressions and keywords to match high severity items such as Access Tokens, API Keys, and database secrets.
