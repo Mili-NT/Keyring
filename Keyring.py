@@ -471,7 +471,7 @@ def misc_database_secrets(displaymode, page, repo_crawl, verbosity):
 					if racecondition.errno != errno.EEXIST:
 						raise
 			with open(db_ouput, 'a') as dbfile:
-				dbfile.write(f'Database file: {k}'
+				dbfile.write(f'Database file: {k}')
 		elif displaymode == 'p' or 'b':
 			lib.PrintSuccess(f'Database file: {k}')
 	database_secrets = ['DB_USER', 'DB_PASSWORD', 'SUPERUSER_NAME', 'SUPERUSER_PASSWORD', 'DB_NAME']
