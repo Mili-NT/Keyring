@@ -31,5 +31,6 @@ Keyring is a tool to search a given URL for API Keys and other secrets.
 - Nitro Links (2 or 0: If not intended for giveaway, can result in neglibigle financial loss.)
 
 ### TODO:
+- Major update on it's way. Streamlining the search functions by making a single search function for all standard keys
 - Add more keys (please send me either a sample key or regex for anything you want added)
 - Bug fixes
