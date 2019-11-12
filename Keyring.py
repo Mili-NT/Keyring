@@ -889,3 +889,6 @@ def main():
 	except KeyboardInterrupt:
 		# print() # are you doing something with this?
 		lib.PrintError("Search canceled.")
+
+if __name__ == '__main__':
+	main()
